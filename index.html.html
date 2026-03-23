@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerUp – פלטפורמת קריירה AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════ */
+:root {
+  --bg:#07080f; --bg2:#0d0e1c; --surface:#111223; --surface2:#181930; --surface3:#1f2040;
+  --border:#262840; --border2:#323560;
+  --p:#6c5fff; --pl:#9d8fff; --pg:rgba(108,95,255,.22);
+  --p2:#ff5c8d; --p3:#34e8a0; --amber:#ffb020;
+  --text:#e8e9f8; --muted:#6065a0; --dim:#3a3d6a;
+  --r:10px; --rm:14px; --rl:20px; --rxl:28px;
+}
+[data-theme=light]{
+  --bg:#f0f1fa; --bg2:#e8eaf5; --surface:#fff; --surface2:#f4f5ff; --surface3:#eceeff;
+  --border:#dde0ff; --border2:#c8ccf5; --text:#12142e; --muted:#6065a0; --dim:#aaaecc;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+
+/* BG */
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 80% 10%,rgba(108,95,255,.08) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 10% 80%,rgba(255,92,141,.06) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 50% 50%,rgba(52,232,160,.04) 0%,transparent 60%);}
+.bg-dots{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(108,95,255,.05) 1px,transparent 1px);
+  background-size:32px 32px;}
+
+/* ═══ COMMON ═══ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:22px;}
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:'Heebo',sans-serif;}
+.btn-p{background:linear-gradient(135deg,var(--p),#9e91ff);color:white;box-shadow:0 0 20px rgba(108,95,255,.25);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(108,95,255,.4);}
+.btn-g{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-g:hover{background:var(--surface3);border-color:var(--border2);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px;}
+.btn-lg{padding:13px 28px;font-size:14px;border-radius:var(--rm);}
+.btn-full{width:100%;justify-content:center;}
+.inp{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:border-color .2s;resize:none;}
+.inp:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(108,95,255,.1);}
+.inp::placeholder{color:var(--dim);}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;}
+.b-p{background:rgba(108,95,255,.12);color:var(--pl);border:1px solid rgba(108,95,255,.22);}
+.b-g{background:rgba(52,232,160,.1);color:var(--p3);border:1px solid rgba(52,232,160,.2);}
+.b-pk{background:rgba(255,92,141,.1);color:var(--p2);border:1px solid rgba(255,92,141,.2);}
+.b-a{background:rgba(255,176,32,.1);color:var(--amber);border:1px solid rgba(255,176,32,.2);}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.chip.on{background:rgba(108,95,255,.12);border-color:var(--p);color:var(--pl);}
+.pbar{height:5px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--p),var(--p2));}
+.sbar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.sbar-lbl{font-size:12px;width:110px;color:var(--muted);}
+.sbar-track{flex:1;height:5px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.sbar-fill{height:100%;border-radius:99px;transition:width .8s ease;}
+.sbar-val{font-size:11px;font-weight:700;width:28px;font-family:'Space Mono',monospace;}
+.spin{width:15px;height:15px;border:2px solid var(--border2);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+
+/* TOAST */
+#tw{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;}
+.toast{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:11px 20px;font-size:13px;font-weight:600;animation:tIn .3s ease;white-space:nowrap;}
+.toast.ok{border-color:rgba(52,232,160,.35);color:var(--p3);}
+.toast.inf{border-color:rgba(108,95,255,.35);color:var(--pl);}
+.toast.wrn{border-color:rgba(255,176,32,.35);color:var(--amber);}
+@keyframes tIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes tOut{from{opacity:1;}to{opacity:0;transform:translateY(10px);}}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ANIMS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.1);opacity:.7;}}
+@keyframes wave{0%,100%{transform:scaleY(.4);}50%{transform:scaleY(1);}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.anim-up{animation:fadeUp .5s ease both;}
+.d1{animation-delay:.1s;} .d2{animation-delay:.2s;} .d3{animation-delay:.3s;} .d4{animation-delay:.4s;}
+
+/* LANG + THEME TOGGLES */
+.lang-toggle{position:fixed;top:18px;left:18px;z-index:500;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px;gap:2px;}
+.lang-btn{padding:5px 13px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .2s;}
+.lang-btn.active{background:var(--p);color:white;}
+.theme-btn{position:fixed;top:18px;right:18px;z-index:500;width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.theme-btn:hover{border-color:var(--p);}
+
+/* ═══════════════════════════════════
+   AUTH
+═══════════════════════════════════ */
+#screen-auth{align-items:center;justify-content:center;padding:40px;}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:48px 44px;width:440px;max-width:100%;}
+.auth-logo{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:32px;}
+.logo-mark{width:42px;height:42px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px var(--pg);}
+.logo-text{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px;}
+.logo-text span{color:var(--p);}
+.auth-title{font-size:22px;font-weight:900;text-align:center;margin-bottom:6px;}
+.auth-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:28px;}
+.google-btn{width:100%;padding:13px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rm);cursor:pointer;font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Heebo',sans-serif;transition:all .2s;margin-bottom:20px;}
+.google-btn:hover{background:var(--surface3);transform:translateY(-1px);}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:12px;color:var(--dim);}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;}
+.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--muted);}
+.auth-switch a{color:var(--pl);cursor:pointer;font-weight:700;}
+
+/* ═══════════════════════════════════
+   ONBOARDING
+═══════════════════════════════════ */
+#screen-ob{align-items:center;justify-content:center;padding:40px;}
+.ob-wrap{width:700px;max-width:100%;}
+.ob-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.ob-logo{display:flex;align-items:center;gap:10px;font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px;}
+.ob-logo span{color:var(--p);}
+.ob-step-info{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);}
+.ob-progress-bar{height:3px;background:var(--surface3);border-radius:99px;margin-bottom:32px;overflow:hidden;}
+.ob-progress-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.ob-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:44px;}
+.ob-q{font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+.ob-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.name-input{font-size:26px;font-weight:700;text-align:center;padding:18px;border-radius:var(--rl);background:var(--surface2);border:2px solid var(--border);color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;margin-bottom:28px;width:100%;}
+.name-input:focus{border-color:var(--p);}
+.name-input::placeholder{color:var(--dim);}
+/* Domain grid */
+.domain-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+.domain-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rm);padding:18px 10px;cursor:pointer;text-align:center;transition:all .2s;}
+.domain-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.domain-card.selected{border-color:var(--p);background:rgba(108,95,255,.1);box-shadow:0 0 0 1px var(--p),0 0 20px var(--pg);}
+.dc-icon{font-size:26px;margin-bottom:8px;}
+.dc-name{font-size:12px;font-weight:700;line-height:1.3;margin-bottom:3px;}
+.dc-sub{font-size:10px;color:var(--muted);line-height:1.4;}
+.domain-card.selected .dc-name{color:var(--pl);}
+/* Skills */
+.search-wrap{position:relative;margin-bottom:18px;}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);}
+.search-inp{padding-right:42px;}
+.skill-cats{display:flex;flex-direction:column;gap:14px;max-height:300px;overflow-y:auto;}
+.skill-cats::-webkit-scrollbar{width:4px;}
+.skill-cats::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+.skill-cat-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.skill-chips{display:flex;flex-wrap:wrap;gap:7px;}
+.skill-chip{padding:6px 13px;border-radius:99px;font-size:12px;font-weight:600;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .15s;color:var(--text);}
+.skill-chip.selected{background:rgba(108,95,255,.15);border-color:var(--p);color:var(--pl);}
+.selected-count{font-size:12px;color:var(--pl);font-weight:700;margin-bottom:12px;}
+/* Strengths */
+.strength-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px;}
+.strength-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rm);padding:16px 10px;cursor:pointer;text-align:center;transition:all .2s;}
+.strength-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.strength-card.selected{border-color:var(--p);background:rgba(108,95,255,.1);}
+.strength-card.disabled{opacity:.3;pointer-events:none;}
+.sc-emoji{font-size:26px;margin-bottom:6px;}
+.sc-name{font-size:11px;font-weight:700;line-height:1.3;}
+.strength-counter{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.strength-counter span{color:var(--pl);font-weight:700;}
+/* Exp */
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.exp-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rm);padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center;}
+.exp-card:hover{border-color:var(--border2);}
+.exp-card.selected{border-color:var(--p);background:rgba(108,95,255,.1);}
+.ec-icon{font-size:22px;margin-bottom:6px;}
+.ec-name{font-size:12px;font-weight:700;}
+.jobtype-wrap{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:28px;}
+.jt-chip{padding:8px 18px;border-radius:99px;font-size:13px;font-weight:600;background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;font-family:'Heebo',sans-serif;}
+.jt-chip.selected{border-color:var(--p);background:rgba(108,95,255,.12);color:var(--pl);}
+.ob-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;}
+/* Finish */
+.ob-finish{text-align:center;padding:20px 0;}
+.ob-finish-icon{font-size:64px;margin-bottom:16px;animation:pulse 2s infinite;display:block;}
+.ob-finish-title{font-family:'Outfit',sans-serif;font-size:30px;font-weight:900;letter-spacing:-1px;margin-bottom:10px;}
+.ob-finish-sub{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;}
+
+/* ═══════════════════════════════════
+   APP SHELL
+═══════════════════════════════════ */
+#screen-app{display:none!important;}
+#screen-app.active{display:flex!important;flex-direction:row!important;}
+.sidebar{width:232px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;padding:22px 0;position:fixed;top:0;right:0;bottom:0;z-index:100;}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:0 20px 22px;border-bottom:1px solid var(--border);margin-bottom:14px;cursor:pointer;}
+.sb-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 14px var(--pg);}
+.sb-txt{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.5px;}
+.sb-txt span{color:var(--p);}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;cursor:pointer;transition:all .15s;color:var(--muted);font-size:13px;font-weight:600;border-right:3px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(108,95,255,.08);color:var(--pl);border-right-color:var(--p);}
+.nav-icon{font-size:17px;width:22px;text-align:center;}
+.sb-divider{height:1px;background:var(--border);margin:8px 0;}
+.sb-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.user-pill{display:flex;align-items:center;gap:9px;background:var(--surface2);padding:9px 12px;border-radius:var(--rm);border:1px solid var(--border);}
+.u-av{width:28px;height:28px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0;}
+.u-name{font-size:12px;font-weight:700;}
+.u-role{font-size:10px;color:var(--muted);}
+.sb-theme-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .2s;}
+.sb-theme-btn:hover{color:var(--text);border-color:var(--border2);}
+.main{margin-right:232px;flex:1;padding:28px 32px;overflow-y:auto;}
+.page{display:none;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.ph-title{font-family:'Outfit',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.5px;}
+.ph-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+
+/* STAT CARD */
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px;position:relative;overflow:hidden;transition:all .2s;}
+.sc:hover{border-color:var(--border2);transform:translateY(-2px);}
+.sc-glow{position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.18;filter:blur(20px);}
+.sc-lbl{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.sc-val{font-size:36px;font-weight:900;letter-spacing:-2px;margin:6px 0 4px;}
+.sc-ch{font-size:12px;}
+.up{color:var(--p3);} .dn{color:var(--p2);}
+
+/* RING */
+.ring-wrap{position:relative;width:88px;height:88px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.ring-num{font-size:20px;font-weight:900;}
+.ring-lbl{font-size:9px;color:var(--muted);}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:60vh;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.agent-av{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 14px var(--pg);flex-shrink:0;}
+.agent-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--p3);}
+.status-dot{width:6px;height:6px;background:var(--p3);border-radius:50%;animation:pulse 2s infinite;}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+.msg{display:flex;gap:10px;animation:slideIn .25s ease;}
+.msg.user{flex-direction:row-reverse;}
+.m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.msg-ai .m-av{background:linear-gradient(135deg,var(--p),#9e91ff);}
+.msg-user .m-av{background:linear-gradient(135deg,var(--p2),#ff8fab);}
+.m-bubble{max-width:78%;padding:11px 15px;border-radius:14px;font-size:13.5px;line-height:1.65;}
+.msg-ai .m-bubble{background:var(--surface2);border:1px solid var(--border);border-top-right-radius:4px;}
+.msg-user .m-bubble{background:linear-gradient(135deg,var(--p),#9e91ff);color:white;border-top-left-radius:4px;}
+.chat-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end;}
+.typing{display:flex;gap:4px;padding:10px 14px;}
+.dot{width:5px;height:5px;background:var(--p);border-radius:50%;animation:wave 1.2s infinite;}
+.dot:nth-child(2){animation-delay:.15s;} .dot:nth-child(3){animation-delay:.3s;}
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px 0;border-top:1px solid var(--border);}
+.sug-chip{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(108,95,255,.08);border:1px solid rgba(108,95,255,.2);color:var(--pl);cursor:pointer;transition:all .2s;}
+.sug-chip:hover{background:rgba(108,95,255,.15);}
+
+/* RESUME */
+.main-tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rm);padding:4px;width:fit-content;margin-bottom:22px;}
+.mtab{padding:8px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .2s;}
+.mtab.active{background:var(--surface3);color:var(--text);box-shadow:0 0 0 1px var(--border2);}
+/* Wizard steps */
+.wizard-steps{display:flex;align-items:center;gap:0;margin-bottom:24px;}
+.ws{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--dim);cursor:pointer;transition:all .2s;}
+.ws.active{color:var(--pl);}
+.ws.done{color:var(--p3);}
+.ws-num{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:all .2s;}
+.ws.active .ws-num{background:var(--p);border-color:var(--p);color:white;box-shadow:0 0 12px var(--pg);}
+.ws.done .ws-num{background:var(--p3);border-color:var(--p3);color:#07080f;}
+.ws-sep{flex:1;height:1.5px;background:var(--border);margin:0 8px;max-width:60px;transition:background .3s;}
+.ws-sep.done{background:var(--p3);}
+/* Templates */
+.template-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.tpl-card{background:var(--surface2);border:2px solid var(--border);border-radius:var(--rm);overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
+.tpl-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.tpl-card.selected{border-color:var(--p);box-shadow:0 0 0 1px var(--p),0 0 20px var(--pg);}
+.tpl-preview{width:100%;aspect-ratio:.707;position:relative;overflow:hidden;}
+.tpl-check{position:absolute;top:8px;right:8px;width:22px;height:22px;background:var(--p);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:12px;color:white;}
+.tpl-card.selected .tpl-check{display:flex;}
+.tpl-name{padding:10px 12px;font-size:12px;font-weight:700;border-top:1px solid var(--border);}
+.tpl-tag{font-size:10px;color:var(--muted);}
+/* Mini resume preview */
+.rm{padding:10px;background:white;color:#1a1a2e;height:100%;display:flex;flex-direction:column;gap:4px;}
+.rm-name{font-weight:900;font-size:8px;padding-bottom:4px;}
+.rm-bar{height:3px;width:60%;border-radius:99px;margin-bottom:4px;}
+.rm-line{height:2.5px;background:#e8e8f5;border-radius:99px;margin-bottom:2.5px;}
+.rm-line.short{width:65%;}
+.rm-line.med{width:82%;}
+.rm-sec{font-weight:800;font-size:6.5px;text-transform:uppercase;letter-spacing:.5px;color:#8085c0;margin-top:5px;margin-bottom:2.5px;}
+/* Language choice */
+.lang-choice{display:flex;gap:14px;margin-bottom:22px;}
+.lang-opt{flex:1;padding:18px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--rm);cursor:pointer;text-align:center;transition:all .2s;}
+.lang-opt:hover{border-color:var(--border2);}
+.lang-opt.selected{border-color:var(--p);background:rgba(108,95,255,.08);}
+.lang-opt-icon{font-size:32px;margin-bottom:8px;}
+.lang-opt-name{font-size:15px;font-weight:800;margin-bottom:4px;}
+.lang-opt-sub{font-size:11px;color:var(--muted);line-height:1.5;}
+.lang-opt-badge{display:inline-block;margin-top:8px;}
+/* Form sections */
+.form-section{margin-bottom:18px;}
+.fs-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);cursor:pointer;user-select:none;}
+.fs-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:9px;}
+.fs-arrow{color:var(--muted);transition:transform .2s;font-style:normal;}
+.fs-arrow.open{transform:rotate(180deg);}
+.fs-body{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rm) var(--rm);padding:16px;}
+.field-row{display:grid;gap:12px;margin-bottom:12px;}
+.field-row.col2{grid-template-columns:1fr 1fr;}
+.field-row.col3{grid-template-columns:1fr 1fr 1fr;}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
+.ai-btn{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--pl);background:rgba(108,95,255,.1);border:1px solid rgba(108,95,255,.2);border-radius:6px;padding:3px 8px;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif;}
+.ai-btn:hover{background:rgba(108,95,255,.2);}
+.section-entry{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);padding:14px;margin-bottom:10px;position:relative;}
+.entry-del{position:absolute;top:8px;left:8px;background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px;padding:4px;}
+.entry-del:hover{color:var(--p2);}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;border:1.5px dashed var(--border2);border-radius:var(--rm);background:transparent;color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;font-family:'Heebo',sans-serif;transition:all .2s;}
+.add-btn:hover{border-color:var(--p);color:var(--pl);background:rgba(108,95,255,.05);}
+/* Exp type toggle */
+.exp-toggle{display:flex;gap:8px;margin-bottom:14px;}
+.et-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--rm);background:var(--surface2);cursor:pointer;text-align:center;font-size:12px;font-weight:700;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .2s;}
+.et-btn:hover{border-color:var(--border2);color:var(--text);}
+.et-btn.active{border-color:var(--p);background:rgba(108,95,255,.1);color:var(--pl);}
+/* Live preview */
+.preview-wrap{background:white;border-radius:var(--rm);overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.4);position:sticky;top:20px;max-height:82vh;overflow-y:auto;}
+.preview-wrap::-webkit-scrollbar{width:3px;}
+.preview-wrap::-webkit-scrollbar-thumb{background:#ddd;border-radius:99px;}
+.cv-preview{width:100%;font-family:'Heebo',sans-serif;color:#1a1a2e;font-size:11px;padding:26px;}
+.cv-preview.en{font-family:'Outfit',sans-serif;direction:ltr;text-align:left;}
+.cv-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--cv-color,#6c5fff);}
+.cv-name{font-size:20px;font-weight:900;letter-spacing:-.5px;margin-bottom:2px;color:var(--cv-color,#6c5fff);}
+.cv-role{font-size:12px;color:#666;margin-bottom:7px;}
+.cv-contacts{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:#666;}
+.cv-sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--cv-color,#6c5fff);margin:12px 0 7px;display:flex;align-items:center;gap:6px;}
+.cv-sec::after{content:'';flex:1;height:1px;background:var(--cv-color,#6c5fff);opacity:.3;}
+.cv-entry{margin-bottom:10px;}
+.cv-entry-title{font-size:12px;font-weight:800;margin-bottom:2px;}
+.cv-entry-sub{font-size:10px;color:#666;margin-bottom:3px;}
+.cv-entry-desc{font-size:10px;line-height:1.6;color:#444;}
+.cv-skills-wrap{display:flex;flex-wrap:wrap;gap:5px;}
+.cv-skill{background:#f0f0ff;color:#6c5fff;padding:3px 8px;border-radius:99px;font-size:9px;font-weight:700;}
+.cv-summary{font-size:10px;line-height:1.7;color:#444;margin-bottom:12px;}
+/* Upload */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--rl);padding:48px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(108,95,255,.03);position:relative;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--p);background:rgba(108,95,255,.07);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+/* Analysis */
+.ac{border-radius:var(--rm);padding:14px;margin-bottom:12px;}
+.ac.good{background:rgba(52,232,160,.06);border:1px solid rgba(52,232,160,.2);}
+.ac.warn{background:rgba(255,176,32,.06);border:1px solid rgba(255,176,32,.2);}
+.ac.bad{background:rgba(255,92,141,.06);border:1px solid rgba(255,92,141,.2);}
+.ac-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.ac-body{font-size:12px;color:var(--muted);line-height:1.6;}
+/* Export */
+.export-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.export-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rm);padding:16px;cursor:pointer;transition:all .2s;text-align:center;}
+.export-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+/* Diff */
+.diff-line{display:flex;gap:10px;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.diff-line:last-child{border:none;}
+.diff-old{flex:1;color:var(--muted);text-decoration:line-through;}
+.diff-new{flex:1;color:var(--p3);font-weight:600;}
+.diff-tag{font-size:10px;background:rgba(52,232,160,.1);color:var(--p3);padding:2px 8px;border-radius:99px;align-self:center;white-space:nowrap;}
+
+/* INTERVIEW */
+.voice-toggle-bar{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.vm-btn{padding:7px 18px;border-radius:99px;font-size:12px;font-weight:700;background:var(--surface3);border:1px solid var(--border);cursor:pointer;font-family:'Heebo',sans-serif;color:var(--muted);transition:all .2s;}
+.vm-btn.active{background:var(--p);border-color:var(--p);color:white;}
+.mic-btn{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--p2));border:none;cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;transition:all .2s;}
+.mic-btn.rec{animation:micPulse 1.5s infinite;background:linear-gradient(135deg,var(--p2),#ff8fab);}
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(255,92,141,.5);}70%{box-shadow:0 0 0 20px rgba(255,92,141,0);}100%{box-shadow:0 0 0 0 rgba(255,92,141,0);}}
+.waveform{display:flex;align-items:center;justify-content:center;gap:3px;height:28px;margin-bottom:10px;}
+.wave-bar{width:3px;background:var(--p);border-radius:99px;height:8px;transition:height .1s;}
+.waveform.active .wave-bar{animation:wave .8s ease-in-out infinite;}
+.waveform.active .wave-bar:nth-child(2){animation-delay:.1s;} .waveform.active .wave-bar:nth-child(3){animation-delay:.2s;}
+.waveform.active .wave-bar:nth-child(4){animation-delay:.3s;} .waveform.active .wave-bar:nth-child(5){animation-delay:.4s;}
+.voice-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);padding:18px;margin-bottom:14px;text-align:center;}
+.voice-timer{font-size:20px;font-weight:900;font-family:'Space Mono',monospace;color:var(--pl);margin-bottom:6px;}
+.voice-status{font-size:12px;color:var(--muted);}
+.voice-status.rec{color:var(--p2);font-weight:700;}
+.q-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);padding:16px;margin-bottom:14px;}
+.q-text{font-size:14px;font-weight:700;line-height:1.5;}
+
+/* MOBILE */
+.mobile-block{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:40px;}
+@media(max-width:768px){.mobile-block{display:flex;}}
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-dots"></div>
+<div id="tw"></div>
+
+<div class="mobile-block">
+  <div style="font-size:48px">💻</div>
+  <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900">CareerUp</div>
+  <div style="font-size:14px;color:var(--muted);line-height:1.7">פתח מהמחשב לחוויה מלאה</div>
+</div>
+
+<!-- LANG TOGGLE -->
+<div class="lang-toggle" id="lang-toggle">
+  <button class="lang-btn active" onclick="setLang('he')">עב</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- THEME TOGGLE -->
+<button class="theme-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+
+<!-- ════════════════════════════════
+     SCREEN: AUTH
+════════════════════════════════ -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-card anim-up">
+    <div class="auth-logo">
+      <div class="logo-mark">🚀</div>
+      <div class="logo-text">Career<span>Up</span></div>
+    </div>
+    <div class="auth-title" id="at-title">התחל את המסע שלך</div>
+    <div class="auth-sub" id="at-sub">הצטרף לאלפי סטודנטים ו-Juniors שמצאו עבודה</div>
+    <button class="google-btn" onclick="goToOb()">🔵 <span id="at-google">המשך עם Google</span></button>
+    <div class="divider"><span id="at-or">או</span></div>
+    <div class="form-group">
+      <label class="form-label" id="at-email-lbl">אימייל</label>
+      <input class="inp" type="email" id="at-email" placeholder="you@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="at-pass-lbl">סיסמה</label>
+      <input class="inp" type="password" id="at-pass" placeholder="••••••••">
+    </div>
+    <button class="btn btn-p btn-lg btn-full" style="margin-top:6px" onclick="goToOb()">
+      <span id="at-register">הרשמה →</span>
+    </button>
+    <div class="auth-switch" id="at-switch">כבר רשום? <a onclick="goToOb()">כניסה</a></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN: ONBOARDING
+════════════════════════════════ -->
+<div class="screen" id="screen-ob">
+  <div class="ob-wrap anim-up">
+    <div class="ob-header">
+      <div class="ob-logo">🚀 Career<span>Up</span></div>
+      <div class="ob-step-info" id="ob-step-info">שלב 1 מתוך 5</div>
+    </div>
+    <div class="ob-progress-bar">
+      <div class="ob-progress-fill" id="ob-fill" style="width:20%"></div>
+    </div>
+    <div class="ob-card">
+      <div id="ob-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN: APP
+════════════════════════════════ -->
+<div class="screen" id="screen-app">
+
+  <nav class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">🚀</div>
+      <div class="sb-txt">Career<span>Up</span></div>
+    </div>
+    <div class="nav-item active" onclick="navigate('dashboard')"><span class="nav-icon">📊</span><span id="nav-db">דשבורד</span></div>
+    <div class="nav-item" onclick="navigate('coach')"><span class="nav-icon">🤖</span><span id="nav-coach">מאמן קריירה AI</span></div>
+    <div class="nav-item" onclick="navigate('resume')"><span class="nav-icon">📄</span><span id="nav-resume">בונה קו"ח</span></div>
+    <div class="nav-item" onclick="navigate('interview')"><span class="nav-icon">🎯</span><span id="nav-iv">מאמן ראיונות</span></div>
+    <div class="sb-divider"></div>
+    <div class="sb-footer">
+      <button class="sb-theme-btn" onclick="toggleTheme()">🌙 <span id="nav-theme">מצב יום/לילה</span></button>
+      <div class="user-pill">
+        <div class="u-av" id="sb-av">?</div>
+        <div>
+          <div class="u-name" id="sb-name">—</div>
+          <div class="u-role" id="sb-role">—</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ─── DASHBOARD ─── -->
+    <div class="page active" id="page-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ph-title" id="dash-hi">שלום! 👋</div>
+          <div class="ph-sub" id="dash-sub">הנה סיכום חיפוש העבודה שלך</div>
+        </div>
+        <button class="btn btn-p" onclick="navigate('coach')">💬 <span id="dash-chat-btn">שוחח עם AI</span></button>
+      </div>
+      <div class="g4" style="margin-bottom:18px">
+        <div class="sc anim-up d1"><div class="sc-glow" style="background:var(--p)"></div><div class="sc-lbl" id="stat1-lbl">מועמדויות</div><div class="sc-val" style="color:var(--p)">0</div><div class="sc-ch up">🚀 התחל!</div></div>
+        <div class="sc anim-up d2"><div class="sc-glow" style="background:var(--p3)"></div><div class="sc-lbl" id="stat2-lbl">ראיונות</div><div class="sc-val" style="color:var(--p3)">0</div><div class="sc-ch">📅 בקרוב</div></div>
+        <div class="sc anim-up d3"><div class="sc-glow" style="background:var(--p2)"></div><div class="sc-lbl" id="stat3-lbl">ציון קו"ח</div><div class="sc-val" style="color:var(--p2)">—</div><div class="sc-ch" id="stat3-sub">בנה קו"ח</div></div>
+        <div class="sc anim-up d4"><div class="sc-glow" style="background:var(--amber)"></div><div class="sc-lbl" id="stat4-lbl">ימים פעיל</div><div class="sc-val" style="color:var(--amber)">1</div><div class="sc-ch up">⭐ יום ראשון!</div></div>
+      </div>
+      <div class="g2 anim-up" style="margin-bottom:18px">
+        <div class="card">
+          <div class="label" id="prog-lbl">התקדמות כוללת</div>
+          <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span id="prog1">פרופיל</span><span style="color:var(--p);font-weight:700">100%</span></div><div class="pbar"><div class="pfill" style="width:100%"></div></div></div>
+          <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span id="prog2">קו"ח</span><span style="color:var(--muted);font-weight:700">0%</span></div><div class="pbar"><div class="pfill" style="width:0%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span id="prog3">ראיונות</span><span style="color:var(--muted);font-weight:700">0%</span></div><div class="pbar"><div class="pfill" style="width:0%;background:linear-gradient(90deg,var(--p2),#ff8fab)"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="label" id="tips-lbl">המלצות AI היום</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="padding:11px;background:rgba(108,95,255,.07);border:1px solid rgba(108,95,255,.15);border-radius:var(--rm)"><div style="font-size:13px;font-weight:700;margin-bottom:3px">📄 <span id="tip1">בנה את קו"ח הראשון שלך</span></div><div style="font-size:11px;color:var(--muted)" id="tip1s">הצעד הראשון לחיפוש עבודה מוצלח</div></div>
+            <div style="padding:11px;background:rgba(52,232,160,.05);border:1px solid rgba(52,232,160,.15);border-radius:var(--rm)"><div style="font-size:13px;font-weight:700;margin-bottom:3px">🎯 <span id="tip2">תרגל ראיון ראשון</span></div><div style="font-size:11px;color:var(--muted)" id="tip2s">5 דקות ביום = ביטחון עצמי</div></div>
+            <div style="padding:11px;background:rgba(255,92,141,.05);border:1px solid rgba(255,92,141,.15);border-radius:var(--rm)"><div style="font-size:13px;font-weight:700;margin-bottom:3px">🤖 <span id="tip3">שאל את המאמן AI</span></div><div style="font-size:11px;color:var(--muted)" id="tip3s">זמין 24/7 לכל שאלה</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card anim-up">
+        <div class="label" id="skills-lbl">הכישורים שלך</div>
+        <div id="dash-skills" style="display:flex;flex-wrap:wrap;gap:8px"><span style="font-size:13px;color:var(--muted)" id="dash-skills-empty">עדיין אין כישורים – עדכן פרופיל</span></div>
+      </div>
+    </div>
+
+    <!-- ─── CAREER COACH ─── -->
+    <div class="page" id="page-coach">
+      <div class="ph">
+        <div>
+          <div class="ph-title" id="coach-title">🤖 מאמן קריירה AI</div>
+          <div class="ph-sub" id="coach-sub">סוכן AI מתמחה בחיפוש עבודה וקורות חיים</div>
+        </div>
+        <button class="btn btn-g" onclick="clearChat()">🗑️ <span id="coach-clear">נקה שיחה</span></button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 282px;gap:18px">
+        <div>
+          <div class="chat-wrap">
+            <div class="chat-header">
+              <div class="agent-av">🤖</div>
+              <div>
+                <div style="font-weight:700;font-size:14px" id="agent-name">CareerUp Agent</div>
+                <div class="agent-status"><div class="status-dot"></div><span id="agent-status">מחובר ומוכן לעזור</span></div>
+              </div>
+              <div style="margin-right:auto;display:flex;gap:7px">
+                <span class="badge b-p" id="badge1">מומחה קריירה</span>
+                <span class="badge b-g" id="badge2">מומחה קו"ח</span>
+              </div>
+            </div>
+            <div class="suggestions" id="sug-wrap">
+              <div class="sug-chip" onclick="quickAsk('קו&quot;ח ללא ניסיון','resume with no experience')">📄 <span class="s-he">קו"ח ללא ניסיון</span><span class="s-en" style="display:none">Resume no exp</span></div>
+              <div class="sug-chip" onclick="quickAsk('כמה שכר לבקש כ-Junior?','How much salary as Junior?')">💰 <span class="s-he">שכר Junior</span><span class="s-en" style="display:none">Junior salary</span></div>
+              <div class="sug-chip" onclick="quickAsk('איך מתחילים LinkedIn?','How to start LinkedIn?')">🔗 LinkedIn</div>
+              <div class="sug-chip" onclick="quickAsk('מה שמים בפרויקטים?','What to write in projects?')">🛠️ <span class="s-he">פרויקטים</span><span class="s-en" style="display:none">Projects</span></div>
+              <div class="sug-chip" onclick="quickAsk('כתוב לי מכתב מקדים','Write a cover letter')">✉️ <span class="s-he">מכתב מקדים</span><span class="s-en" style="display:none">Cover letter</span></div>
+              <div class="sug-chip" onclick="quickAsk('איך מכינים לראיון?','How to prepare for interview?')">🎯 <span class="s-he">הכנה לראיון</span><span class="s-en" style="display:none">Interview prep</span></div>
+            </div>
+            <div class="chat-msgs" id="chat-msgs">
+              <div class="msg msg-ai">
+                <div class="m-av">🤖</div>
+                <div class="m-bubble" id="welcome-msg">שלום! אני המאמן שלך. כאן לעזור בכל הקשור לחיפוש עבודה. במה נתחיל? 😊</div>
+              </div>
+            </div>
+            <div class="chat-foot">
+              <textarea class="inp" id="chat-inp" rows="2" style="flex:1" placeholder="שאל אותי כל שאלה..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+              <button class="btn btn-p" onclick="sendMsg()">↑</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="label" id="profile-lbl">הפרופיל שלי</div>
+            <div style="font-size:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)" id="p-name-lbl">שם</span><span id="p-name">—</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)" id="p-domain-lbl">תחום</span><span id="p-domain">—</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)" id="p-exp-lbl">ניסיון</span><span id="p-exp">—</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)" id="p-skills-lbl">כישורים</span><span id="p-skills-count">0</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="label" id="expertise-lbl">המומחיות שלי</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+              <div style="display:flex;gap:9px;padding:9px;background:rgba(108,95,255,.07);border-radius:var(--r)"><span>📄</span><span id="ex1">כתיבת קו"ח מקצועי</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:rgba(52,232,160,.05);border-radius:var(--r)"><span>🔍</span><span id="ex2">אסטרטגיית חיפוש עבודה</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:rgba(255,92,141,.05);border-radius:var(--r)"><span>💰</span><span id="ex3">משא ומתן על שכר</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:rgba(255,176,32,.05);border-radius:var(--r)"><span>🔗</span><span>LinkedIn & Personal Brand</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RESUME BUILDER ─── -->
+    <div class="page" id="page-resume">
+      <div class="ph">
+        <div>
+          <div class="ph-title" id="res-title">📄 בונה קו"ח</div>
+          <div class="ph-sub" id="res-sub">כתוב מאפס, העלה קיים, או התאם למשרה</div>
+        </div>
+        <button class="btn btn-p" onclick="exportFile('pdf')">⬇️ <span id="res-export">ייצוא</span></button>
+      </div>
+
+      <div class="main-tabs">
+        <button class="mtab active" onclick="switchResTab('scratch')">✍️ <span id="tab-scratch-lbl">כתיבה מאפס</span></button>
+        <button class="mtab" onclick="switchResTab('upload')">📤 <span id="tab-upload-lbl">העלאת קו"ח קיים</span></button>
+        <button class="mtab" onclick="switchResTab('match')">🎯 <span id="tab-match-lbl">התאמה למשרה</span></button>
+      </div>
+
+      <!-- ── SCRATCH ── -->
+      <div id="tab-scratch-content">
+        <div class="wizard-steps">
+          <div class="ws active" id="ws1" onclick="goWiz(1)"><div class="ws-num">1</div><span id="wl1">תבנית</span></div>
+          <div class="ws-sep" id="wsep1"></div>
+          <div class="ws" id="ws2" onclick="goWiz(2)"><div class="ws-num">2</div><span id="wl2">שפה</span></div>
+          <div class="ws-sep" id="wsep2"></div>
+          <div class="ws" id="ws3" onclick="goWiz(3)"><div class="ws-num">3</div><span id="wl3">תוכן</span></div>
+          <div class="ws-sep" id="wsep3"></div>
+          <div class="ws" id="ws4" onclick="goWiz(4)"><div class="ws-num">4</div><span id="wl4">ייצוא</span></div>
+        </div>
+
+        <!-- STEP 1: TEMPLATE -->
+        <div id="wstep1">
+          <div class="label" id="tpl-lbl">בחר תבנית עיצוב</div>
+          <div class="template-grid">
+            <div class="tpl-card selected" onclick="selectTpl('classic',this)">
+              <div class="tpl-preview"><div class="rm" style="--cv-color:#2563eb"><div class="rm-name" style="color:#2563eb;border-bottom:1px solid #2563eb">FULL NAME</div><div class="rm-bar" style="background:#2563eb"></div><div class="rm-sec">EXPERIENCE</div><div class="rm-line med"></div><div class="rm-line short"></div><div class="rm-sec">SKILLS</div><div class="rm-line"></div></div></div>
+              <div class="tpl-check">✓</div>
+              <div class="tpl-name">Classic<div class="tpl-tag">🏆 מומלץ ביותר</div></div>
+            </div>
+            <div class="tpl-card" onclick="selectTpl('modern',this)">
+              <div class="tpl-preview"><div class="rm"><div style="background:linear-gradient(135deg,#6c5fff,#ff5c8d);padding:8px;margin:-10px -10px 8px;color:white"><div style="font-weight:900;font-size:8px">FULL NAME</div><div style="font-size:6.5px;opacity:.8">Role</div></div><div class="rm-sec">EXPERIENCE</div><div class="rm-line med"></div><div class="rm-line short"></div><div class="rm-sec">SKILLS</div><div class="rm-line"></div></div></div>
+              <div class="tpl-check">✓</div>
+              <div class="tpl-name">Modern<div class="tpl-tag">✨ פופולרי בהייטק</div></div>
+            </div>
+            <div class="tpl-card" onclick="selectTpl('minimal',this)">
+              <div class="tpl-preview"><div class="rm"><div class="rm-name" style="border-bottom:2px solid #1a1a2e;font-size:10px">FULL NAME</div><div style="height:2px;width:25%;background:#1a1a2e;margin-bottom:5px"></div><div class="rm-sec" style="color:#444">EXPERIENCE</div><div class="rm-line med"></div><div class="rm-line short"></div><div class="rm-sec" style="color:#444">EDUCATION</div><div class="rm-line med"></div></div></div>
+              <div class="tpl-check">✓</div>
+              <div class="tpl-name">Minimal<div class="tpl-tag">🎯 נקי ופשוט</div></div>
+            </div>
+            <div class="tpl-card" onclick="selectTpl('sidebar',this)">
+              <div class="tpl-preview"><div class="rm" style="padding:0;flex-direction:row;gap:0"><div style="width:35%;background:#6c5fff;padding:8px 6px"><div style="font-size:7px;font-weight:900;color:white;margin-bottom:3px">NAME</div><div class="rm-line" style="background:rgba(255,255,255,.3)"></div><div class="rm-line short" style="background:rgba(255,255,255,.3)"></div></div><div style="flex:1;padding:8px 6px"><div class="rm-sec">EXPERIENCE</div><div class="rm-line med"></div><div class="rm-line short"></div></div></div></div>
+              <div class="tpl-check">✓</div>
+              <div class="tpl-name">Sidebar<div class="tpl-tag">💼 נשים לב אליך</div></div>
+            </div>
+          </div>
+          <button class="btn btn-p btn-lg" onclick="goWiz(2)"><span id="wiz-next1">הבא – בחירת שפה →</span></button>
+        </div>
+
+        <!-- STEP 2: LANGUAGE -->
+        <div id="wstep2" style="display:none">
+          <div class="lang-choice">
+            <div class="lang-opt" onclick="selectCVLang('en',this)">
+              <div class="lang-opt-icon">🇺🇸</div>
+              <div class="lang-opt-name">English</div>
+              <div class="lang-opt-sub" id="en-sub">מומלץ לכל משרות ההייטק בישראל</div>
+              <div class="lang-opt-badge"><span class="badge b-g">✓ מומלץ</span></div>
+            </div>
+            <div class="lang-opt" onclick="selectCVLang('he',this)">
+              <div class="lang-opt-icon">🇮🇱</div>
+              <div class="lang-opt-name">עברית</div>
+              <div class="lang-opt-sub" id="he-sub">מתאים לחברות ממשלתיות ותפקידים מסוימים</div>
+              <div class="lang-opt-badge"><span class="badge b-a">מצבים ספציפיים</span></div>
+            </div>
+            <div class="lang-opt" onclick="selectCVLang('both',this)">
+              <div class="lang-opt-icon">🌐</div>
+              <div class="lang-opt-name" id="both-lbl">שתיהן</div>
+              <div class="lang-opt-sub" id="both-sub">צור גרסה בעברית וגרסה באנגלית</div>
+              <div class="lang-opt-badge"><span class="badge b-p">גמיש</span></div>
+            </div>
+          </div>
+          <div style="padding:14px;background:rgba(52,232,160,.05);border:1px solid rgba(52,232,160,.15);border-radius:var(--rm);margin-bottom:22px;font-size:13px;line-height:1.7;color:var(--muted)">
+            💡 <strong style="color:var(--p3)" id="tip-eng-title">טיפ:</strong> <span id="tip-eng-body">95% ממשרות ההייטק בישראל מצפות לקו"ח באנגלית. גם אם החברה ישראלית, קו"ח באנגלית מראה על מקצועיות.</span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost" onclick="goWiz(1)">← <span id="back1">חזרה</span></button>
+            <button class="btn btn-p btn-lg" onclick="goWiz(3)"><span id="wiz-next2">הבא – מילוי תוכן →</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: CONTENT -->
+        <div id="wstep3" style="display:none">
+          <div class="g2" style="align-items:start">
+            <div>
+              <!-- PERSONAL -->
+              <div class="form-section">
+                <div class="fs-header" onclick="toggleSection(this)">
+                  <div class="fs-title">👤 <span id="fs-personal">פרטים אישיים</span></div>
+                  <i class="fs-arrow open">▾</i>
+                </div>
+                <div class="fs-body">
+                  <div class="field-row col2">
+                    <div><div class="field-label"><span id="fl-name">שם מלא</span> <button class="ai-btn" onclick="aiImprove('name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Eden Ziso" oninput="updatePreview()"></div>
+                    <div><div class="field-label"><span id="fl-role">תפקיד מבוקש</span> <button class="ai-btn" onclick="aiImprove('role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Frontend Developer" oninput="updatePreview()"></div>
+                  </div>
+                  <div class="field-row col3">
+                    <div><div class="field-label" id="fl-email">אימייל</div><input class="inp" id="cv-email" placeholder="eden@email.com" oninput="updatePreview()"></div>
+                    <div><div class="field-label" id="fl-phone">טלפון</div><input class="inp" placeholder="+972-50-..."></div>
+                    <div><div class="field-label" id="fl-city">עיר</div><input class="inp" placeholder="Tel Aviv" oninput="updatePreview()"></div>
+                  </div>
+                  <div class="field-row">
+                    <div><div class="field-label">LinkedIn</div><input class="inp" placeholder="linkedin.com/in/..."></div>
+                  </div>
+                  <div class="field-row">
+                    <div><div class="field-label">GitHub / Portfolio</div><input class="inp" placeholder="github.com/..."></div>
+                  </div>
+                  <div><div class="field-label"><span id="fl-summary">תקציר מקצועי</span> <button class="ai-btn" onclick="aiImprove('summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate developer..." oninput="updatePreview()"></textarea></div>
+                </div>
+              </div>
+
+              <!-- EXP / PROJECTS -->
+              <div class="form-section">
+                <div class="fs-header" onclick="toggleSection(this)">
+                  <div class="fs-title">💼 <span id="fs-exp">ניסיון / פרויקטים</span></div>
+                  <i class="fs-arrow open">▾</i>
+                </div>
+                <div class="fs-body">
+                  <div class="exp-toggle">
+                    <button class="et-btn active" onclick="setExpType('both',this)">🔄 <span id="et-both">שניהם</span></button>
+                    <button class="et-btn" onclick="setExpType('exp',this)">💼 <span id="et-exp">ניסיון בלבד</span></button>
+                    <button class="et-btn" onclick="setExpType('proj',this)">🛠️ <span id="et-proj">פרויקטים בלבד</span></button>
+                  </div>
+                  <div id="exp-section">
+                    <div class="label" id="exp-lbl">ניסיון תעסוקתי</div>
+                    <div class="section-entry">
+                      <button class="entry-del" onclick="this.parentElement.remove()">🗑</button>
+                      <div class="field-row col2">
+                        <div><div class="field-label" id="fl-pos">תפקיד</div><input class="inp" placeholder="Frontend Developer" style="font-size:12px" oninput="updatePreview()"></div>
+                        <div><div class="field-label" id="fl-company">חברה</div><input class="inp" placeholder="Company Name" style="font-size:12px" oninput="updatePreview()"></div>
+                      </div>
+                      <div class="field-row col2">
+                        <div><div class="field-label" id="fl-start">התחלה</div><input class="inp" placeholder="Jan 2023" style="font-size:12px"></div>
+                        <div><div class="field-label" id="fl-end">סיום</div><input class="inp" placeholder="Present" style="font-size:12px"></div>
+                      </div>
+                      <div><div class="field-label"><span id="fl-desc">תיאור</span> <button class="ai-btn" onclick="aiImprove('exp')">✨ שפר עם AI</button></div><textarea class="inp" rows="3" placeholder="• Built responsive React components..." style="font-size:12px" oninput="updatePreview()"></textarea></div>
+                    </div>
+                    <button class="add-btn" onclick="addEntry('exp')">+ <span id="add-exp">הוסף ניסיון</span></button>
+                  </div>
+                  <div id="proj-section" style="margin-top:16px">
+                    <div class="label" id="proj-lbl">פרויקטים</div>
+                    <div class="section-entry">
+                      <button class="entry-del" onclick="this.parentElement.remove()">🗑</button>
+                      <div class="field-row col2">
+                        <div><div class="field-label" id="fl-pname">שם פרויקט</div><input class="inp" placeholder="CareerUp" style="font-size:12px" oninput="updatePreview()"></div>
+                        <div><div class="field-label" id="fl-tech">טכנולוגיות</div><input class="inp" placeholder="React, Node.js, Claude API" style="font-size:12px"></div>
+                      </div>
+                      <div class="field-row col2">
+                        <div><div class="field-label">GitHub</div><input class="inp" placeholder="github.com/..." style="font-size:12px"></div>
+                        <div><div class="field-label">Demo</div><input class="inp" placeholder="careerup.app" style="font-size:12px"></div>
+                      </div>
+                      <div><div class="field-label"><span id="fl-pdesc">תיאור</span> <button class="ai-btn" onclick="aiImprove('proj')">✨ שפר עם AI</button></div><textarea class="inp" rows="2" placeholder="AI-powered career platform..." style="font-size:12px" oninput="updatePreview()"></textarea></div>
+                    </div>
+                    <button class="add-btn" onclick="addEntry('proj')">+ <span id="add-proj">הוסף פרויקט</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- EDUCATION -->
+              <div class="form-section">
+                <div class="fs-header" onclick="toggleSection(this)">
+                  <div class="fs-title">🎓 <span id="fs-edu">השכלה</span></div>
+                  <i class="fs-arrow open">▾</i>
+                </div>
+                <div class="fs-body">
+                  <div class="section-entry">
+                    <div class="field-row col2">
+                      <div><div class="field-label" id="fl-inst">מוסד</div><input class="inp" placeholder="Bar-Ilan University" style="font-size:12px" oninput="updatePreview()"></div>
+                      <div><div class="field-label" id="fl-degree">תואר</div><input class="inp" placeholder="B.Sc. High Tech Science" style="font-size:12px" oninput="updatePreview()"></div>
+                    </div>
+                    <div class="field-row col2">
+                      <div><div class="field-label" id="fl-edu-start">שנת התחלה</div><input class="inp" placeholder="2023" style="font-size:12px"></div>
+                      <div><div class="field-label" id="fl-edu-end">שנת סיום</div><input class="inp" placeholder="2026" style="font-size:12px"></div>
+                    </div>
+                  </div>
+                  <button class="add-btn" onclick="addEntry('edu')">+ <span id="add-edu">הוסף השכלה</span></button>
+                </div>
+              </div>
+
+              <!-- SKILLS -->
+              <div class="form-section">
+                <div class="fs-header" onclick="toggleSection(this)">
+                  <div class="fs-title">🛠️ <span id="fs-skills">כישורים</span></div>
+                  <i class="fs-arrow open">▾</i>
+                </div>
+                <div class="fs-body">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:10px" id="skills-auto-note">מגיעים אוטומטית מהפרופיל שלך – ניתן לערוך</div>
+                  <div id="cv-skills-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div>
+                  <button class="btn btn-ghost btn-sm" onclick="addSkillPrompt()">+ <span id="add-skill">הוסף כישור</span></button>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-ghost" onclick="goWiz(2)">← <span id="back2">חזרה</span></button>
+                <button class="btn btn-p btn-lg" onclick="goWiz(4)"><span id="wiz-next3">הבא – ייצוא →</span></button>
+              </div>
+            </div>
+
+            <!-- LIVE PREVIEW -->
+            <div>
+              <div class="label" id="preview-lbl">תצוגה מקדימה חיה</div>
+              <div class="preview-wrap">
+                <div class="cv-preview en" id="cv-preview-content">
+                  <div class="cv-header">
+                    <div class="cv-name" id="pr-name">Your Name</div>
+                    <div class="cv-role" id="pr-role">Your Role</div>
+                    <div class="cv-contacts" id="pr-contacts"><span>📧 your@email.com</span><span>📍 Tel Aviv</span></div>
+                  </div>
+                  <div class="cv-sec">Professional Summary</div>
+                  <div class="cv-summary" id="pr-summary">Your summary will appear here...</div>
+                  <div class="cv-sec">Experience</div>
+                  <div class="cv-entry"><div class="cv-entry-title">Role</div><div class="cv-entry-sub">Company · 2023 – Present</div><div class="cv-entry-desc">• Description...</div></div>
+                  <div class="cv-sec">Projects</div>
+                  <div class="cv-entry"><div class="cv-entry-title">CareerUp</div><div class="cv-entry-sub">React, Node.js, Claude API</div><div class="cv-entry-desc">• AI career platform...</div></div>
+                  <div class="cv-sec">Education</div>
+                  <div class="cv-entry"><div class="cv-entry-title">B.Sc. High Tech Science</div><div class="cv-entry-sub">Bar-Ilan University · 2023–2026</div></div>
+                  <div class="cv-sec">Skills</div>
+                  <div class="cv-skills-wrap" id="pr-skills"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: EXPORT -->
+        <div id="wstep4" style="display:none">
+          <div class="g2" style="align-items:start">
+            <div>
+              <div class="label" id="ai-analysis-lbl">ניתוח AI לפני ייצוא</div>
+              <div class="card" style="margin-bottom:16px">
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+                  <div class="ring-wrap">
+                    <svg width="88" height="88" viewBox="0 0 88 88"><circle cx="44" cy="44" r="35" fill="none" stroke="var(--border)" stroke-width="6"/><circle id="exp-ring" cx="44" cy="44" r="35" fill="none" stroke="url(#gr1)" stroke-width="6" stroke-dasharray="220" stroke-dashoffset="55" stroke-linecap="round"/><defs><linearGradient id="gr1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6c5fff"/><stop offset="100%" stop-color="#ff5c8d"/></linearGradient></defs></svg>
+                    <div class="ring-inner"><div class="ring-num" style="color:#6c5fff" id="exp-score">75</div><div class="ring-lbl" id="score-lbl">ציון</div></div>
+                  </div>
+                  <div><div style="font-size:14px;font-weight:800;margin-bottom:4px" id="score-verdict">קו"ח טוב! יש עוד מה לשפר</div><div style="font-size:12px;color:var(--muted)" id="score-sub">הוסף פרטים לשיפור הציון</div></div>
+                </div>
+                <div class="sbar-row"><div class="sbar-lbl">ATS Keywords</div><div class="sbar-track"><div class="sbar-fill" style="width:68%;background:var(--p)"></div></div><div class="sbar-val" style="color:var(--p)">68</div></div>
+                <div class="sbar-row"><div class="sbar-lbl">Format</div><div class="sbar-track"><div class="sbar-fill" style="width:88%;background:var(--p3)"></div></div><div class="sbar-val" style="color:var(--p3)">88</div></div>
+                <div class="sbar-row"><div class="sbar-lbl">Projects</div><div class="sbar-track"><div class="sbar-fill" style="width:72%;background:var(--amber)"></div></div><div class="sbar-val" style="color:var(--amber)">72</div></div>
+              </div>
+              <div class="ac warn" style="margin-bottom:10px"><div class="ac-title">⚠️ <span id="ac1-t">חסרות מילות מפתח</span></div><div class="ac-body" id="ac1-b">הוסף: TypeScript, REST API, Agile</div></div>
+              <div class="ac good" style="margin-bottom:10px"><div class="ac-title">✅ <span id="ac2-t">פרויקטים מצוינים</span></div><div class="ac-body" id="ac2-b">CareerUp מרשים! הוסף לינקים חיים</div></div>
+              <div class="ac good"><div class="ac-title">✅ <span id="ac3-t">פורמט תקין</span></div><div class="ac-body" id="ac3-b">קריא ומסודר לסריקת ATS</div></div>
+            </div>
+            <div>
+              <div class="label" id="export-lbl">ייצוא קובץ</div>
+              <div class="export-opts" style="margin-bottom:16px">
+                <div class="export-card" onclick="exportFile('pdf')"><div style="font-size:28px;margin-bottom:8px">📄</div><div style="font-size:13px;font-weight:700">PDF</div><div style="font-size:11px;color:var(--muted)" id="pdf-sub">מומלץ לרוב המשרות</div></div>
+                <div class="export-card" onclick="exportFile('word')"><div style="font-size:28px;margin-bottom:8px">📝</div><div style="font-size:13px;font-weight:700">Word (.docx)</div><div style="font-size:11px;color:var(--muted)" id="word-sub">לעריכה נוספת</div></div>
+              </div>
+              <div class="preview-wrap">
+                <div class="cv-preview en">
+                  <div class="cv-header"><div class="cv-name" id="exp-pr-name">Eden Ziso</div><div class="cv-role">Frontend Developer</div><div class="cv-contacts"><span>📧 eden@email.com</span><span>🔗 github.com/eden</span><span>📍 Tel Aviv</span></div></div>
+                  <div class="cv-sec">Professional Summary</div>
+                  <div class="cv-summary">Passionate frontend developer and 2nd year B.Sc. High Tech Science student at Bar-Ilan University. Building AI-powered applications with React and Node.js.</div>
+                  <div class="cv-sec">Projects</div>
+                  <div class="cv-entry"><div class="cv-entry-title">CareerUp – AI Career Platform</div><div class="cv-entry-sub">React · Node.js · Claude API · HTML/CSS</div><div class="cv-entry-desc">• Built a full-stack AI-powered career platform for students and juniors<br>• Integrated Claude AI for coaching, resume analysis, and interview practice<br>• Implemented voice recording for interview training</div></div>
+                  <div class="cv-sec">Education</div>
+                  <div class="cv-entry"><div class="cv-entry-title">B.Sc. High Tech Science</div><div class="cv-entry-sub">Bar-Ilan University · 2023–2026</div></div>
+                  <div class="cv-sec">Skills</div>
+                  <div class="cv-skills-wrap"><span class="cv-skill">JavaScript</span><span class="cv-skill">React</span><span class="cv-skill">Node.js</span><span class="cv-skill">Python</span><span class="cv-skill">Git</span></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <button class="btn btn-p btn-full" onclick="exportFile('pdf')">⬇️ PDF</button>
+                <button class="btn btn-g btn-full" onclick="exportFile('word')">📝 Word</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px"><button class="btn btn-ghost" onclick="goWiz(3)">← <span id="back3">חזרה לעריכה</span></button></div>
+        </div>
+      </div>
+
+      <!-- ── UPLOAD ── -->
+      <div id="tab-upload-content" style="display:none">
+        <div class="g2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="upload-zone" id="upload-zone" ondrop="handleDrop(event)" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+              <input type="file" accept=".pdf,.doc,.docx" onchange="handleFile(this.files[0])">
+              <div style="font-size:48px;margin-bottom:12px">📤</div>
+              <div style="font-size:16px;font-weight:800;margin-bottom:6px" id="upload-title">גרור קובץ קו"ח לכאן</div>
+              <div style="font-size:13px;color:var(--muted)" id="upload-sub2">או לחץ לבחירת קובץ</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:8px">PDF · DOC · DOCX · מקסימום 5MB</div>
+            </div>
+            <div id="upload-analysis" style="display:none">
+              <div class="card" style="margin-bottom:14px">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                  <div style="font-size:32px">📄</div>
+                  <div><div style="font-weight:700">resume_eden.pdf</div><div style="font-size:12px;color:var(--p3)">✅ <span id="scanned-ok">נסרק בהצלחה</span></div></div>
+                  <button class="btn btn-ghost btn-sm" style="margin-right:auto" onclick="resetUpload()" id="change-file-btn">שנה קובץ</button>
+                </div>
+                <div class="ac bad" style="margin-bottom:10px"><div class="ac-title">❌ <span id="uac1-t">חסר GitHub / פרויקטים</span></div><div class="ac-body" id="uac1-b">מעסיקים מצפים לראות קוד אמיתי. הוסף לינק GitHub ופרויקט אחד לפחות.</div></div>
+                <div class="ac warn" style="margin-bottom:10px"><div class="ac-title">⚠️ <span id="uac2-t">תקציר לא ספציפי</span></div><div class="ac-body" id="uac2-b">AI מציע גרסה משופרת – לחץ שפר עם AI ↓</div></div>
+                <div class="ac good"><div class="ac-title">✅ <span id="uac3-t">פורמט תקין</span></div><div class="ac-body" id="uac3-b">קריא לסריקת ATS</div></div>
+              </div>
+              <div class="card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                  <div style="font-weight:700" id="edit-cv-lbl">עריכת קו"ח</div>
+                  <button class="ai-btn" onclick="improveAll()" id="improve-all-btn">✨ שפר הכל עם AI</button>
+                </div>
+                <div style="margin-bottom:12px"><div class="field-label" id="u-name-lbl">שם מלא</div><input class="inp" value="Eden Ziso"></div>
+                <div style="margin-bottom:12px"><div class="field-label" id="u-role-lbl">תפקיד מבוקש</div><input class="inp" value="Frontend Developer"></div>
+                <div><div class="field-label"><span id="u-summary-lbl">תקציר</span> <button class="ai-btn" onclick="aiImprove('upload-summary')">✨ שפר</button></div><textarea class="inp" rows="4">Software engineer seeking frontend role...</textarea></div>
+              </div>
+            </div>
+            <div id="jm-diff" style="display:none">
+              <div style="background:rgba(108,95,255,.05);border:1px solid rgba(108,95,255,.18);border-radius:var(--rm);padding:16px">
+                <div style="font-size:13px;font-weight:700;color:var(--pl);margin-bottom:12px" id="jm-diff-title">🎯 קו"ח עודכן לפי המשרה</div>
+                <div class="diff-line"><div class="diff-old">Software engineer seeking role</div><div class="diff-new">React developer with strong frontend skills</div><div class="diff-tag" id="dt1">תקציר</div></div>
+                <div class="diff-line"><div class="diff-old">Built web applications</div><div class="diff-new">Built responsive React apps with TypeScript and REST APIs</div><div class="diff-tag" id="dt2">ניסיון</div></div>
+                <div class="diff-line"><div class="diff-old">HTML, CSS, JS</div><div class="diff-new">React, TypeScript, HTML5, CSS3, REST APIs, Git</div><div class="diff-tag" id="dt3">כישורים</div></div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button class="btn btn-p btn-sm" id="approve-btn">✅ אשר שינויים</button>
+                  <button class="btn btn-ghost btn-sm" onclick="document.getElementById('jm-diff').style.display='none'" id="cancel-btn">✕ בטל</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <div style="font-weight:700;margin-bottom:6px" id="jm-title">🎯 עדכן קו"ח לפי משרה</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6" id="jm-sub">הדבק תיאור משרה וה-AI יעדכן לך את הקו"ח אוטומטית</div>
+              <textarea class="inp" id="upload-job-desc" rows="8" placeholder="הדבק תיאור משרה כאן..."></textarea>
+              <button class="btn btn-p btn-full" style="margin-top:12px" onclick="updateCVForJob()" id="jm-btn">🤖 עדכן קו"ח אוטומטית</button>
+            </div>
+            <div class="card">
+              <div class="label" id="export-lang-lbl">שפת הקו"ח</div>
+              <div style="display:flex;gap:8px;margin-bottom:14px">
+                <button class="btn btn-p btn-sm">🇺🇸 English</button>
+                <button class="btn btn-ghost btn-sm">🇮🇱 עברית</button>
+                <button class="btn btn-ghost btn-sm">🌐 שתיהן</button>
+              </div>
+              <div class="export-opts">
+                <div class="export-card" onclick="exportFile('pdf')"><div style="font-size:24px;margin-bottom:6px">📄</div><div style="font-size:13px;font-weight:700">PDF</div></div>
+                <div class="export-card" onclick="exportFile('word')"><div style="font-size:24px;margin-bottom:6px">📝</div><div style="font-size:13px;font-weight:700">Word</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MATCH ── -->
+      <div id="tab-match-content" style="display:none">
+        <div class="g2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <div class="label" id="match-paste-lbl">הדבק דרישות משרה</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6" id="match-desc">ה-AI ינתח פערים, ימליץ על קורסים ויראה כמה % הסיכוי שלך יעלה</div>
+              <textarea class="inp" id="job-desc-match" rows="11" placeholder="הדבק כאן תיאור משרה מלא..."></textarea>
+              <button class="btn btn-p btn-full" style="margin-top:12px" onclick="analyzeMatch()">🔍 <span id="match-btn-lbl">נתח התאמה</span></button>
+            </div>
+          </div>
+          <div>
+            <div id="match-empty-state" class="card" style="text-align:center;padding:40px;border-style:dashed">
+              <div style="font-size:40px;margin-bottom:12px">📋</div>
+              <div style="font-size:14px;font-weight:700;margin-bottom:6px" id="match-empty-t">הדבק תיאור משרה</div>
+              <div style="font-size:12px;color:var(--muted)" id="match-empty-s">ותקבל ניתוח מלא + המלצות קורסים</div>
+            </div>
+            <div id="match-loading" style="display:none">
+              <div class="card" style="text-align:center;padding:32px">
+                <div style="font-size:32px;margin-bottom:12px">🤖</div>
+                <div style="font-weight:700;margin-bottom:12px" id="match-loading-t">מנתח...</div>
+                <div style="display:flex;justify-content:center;gap:5px"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              </div>
+            </div>
+            <div id="match-results" style="display:none;flex-direction:column;gap:14px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── INTERVIEW ─── -->
+    <div class="page" id="page-interview">
+      <div class="ph">
+        <div>
+          <div class="ph-title" id="iv-title">🎯 מאמן ראיונות AI</div>
+          <div class="ph-sub" id="iv-sub">תרגול כתוב + קולי עם משוב Claude</div>
+        </div>
+        <button class="btn btn-p" onclick="startInterview()">▶ <span id="iv-start-btn">התחל תרגול</span></button>
+      </div>
+      <div class="g2" style="align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="label" id="iv-settings-lbl">הגדרות</div>
+            <div style="margin-bottom:12px">
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px" id="iv-type-lbl">סוג הראיון</label>
+              <select class="inp" id="iv-type">
+                <option value="behavioral">Behavioral (STAR)</option>
+                <option value="hr">HR / כללי</option>
+                <option value="technical">Technical</option>
+              </select>
+            </div>
+            <div style="margin-bottom:12px">
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px" id="iv-role-lbl">תפקיד</label>
+              <input class="inp" id="iv-role" placeholder="Frontend Developer">
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px" id="iv-company-lbl">חברה (אופציונלי)</label>
+              <input class="inp" id="iv-company" placeholder="שם החברה...">
+            </div>
+          </div>
+
+          <div class="card" id="iv-panel" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <div style="font-weight:700;font-size:14px" id="iv-q-title">🎙️ שאלה</div>
+              <span class="badge b-p" id="iv-qnum">1/5</span>
+            </div>
+            <div class="q-card">
+              <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:5px" id="iv-qtype">Behavioral</div>
+              <div class="q-text" id="iv-qtext">טוען...</div>
+            </div>
+
+            <!-- VOICE / TEXT TOGGLE -->
+            <div class="voice-panel">
+              <div class="voice-toggle-bar">
+                <button class="vm-btn active" id="mode-text" onclick="setIVMode('text')">✍️ <span id="mode-text-lbl">כתיבה</span></button>
+                <button class="vm-btn" id="mode-voice" onclick="setIVMode('voice')">🎤 <span id="mode-voice-lbl">קולי</span></button>
+              </div>
+              <!-- TEXT -->
+              <div id="iv-text-mode">
+                <textarea class="inp" id="iv-ans" rows="5" placeholder="כתוב את תשובתך כאן..."></textarea>
+                <div style="display:flex;gap:8px;margin-top:10px">
+                  <button class="btn btn-p btn-full" onclick="submitIVAnswer()" id="iv-submit-btn"><span id="iv-submit-lbl">שלח תשובה</span></button>
+                  <button class="btn btn-g" onclick="ivNextQ()"><span id="iv-skip-lbl">דלג →</span></button>
+                </div>
+              </div>
+              <!-- VOICE -->
+              <div id="iv-voice-mode" style="display:none">
+                <div class="waveform" id="waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
+                <div class="voice-timer" id="voice-timer" style="display:none">00:00</div>
+                <button class="mic-btn" id="mic-btn" onclick="toggleRec()">🎤</button>
+                <div class="voice-status" id="voice-status">לחץ להתחיל הקלטה</div>
+                <div style="display:flex;gap:8px;margin-top:14px;justify-content:center">
+                  <button class="btn btn-p" id="voice-submit-btn" style="display:none" onclick="submitVoice()"><span id="voice-submit-lbl">שלח הקלטה</span></button>
+                  <button class="btn btn-g" onclick="ivNextQ()"><span id="iv-skip2-lbl">דלג →</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="iv-feedback" style="display:none">
+            <div class="label" id="iv-fb-lbl">משוב AI</div>
+            <div id="iv-feedback-content"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card" id="iv-results" style="display:none">
+            <div class="label" id="iv-results-lbl">סיכום ביצועים</div>
+            <div id="iv-results-content"></div>
+          </div>
+          <div class="card">
+            <div class="label" id="iv-tips-lbl">טיפים לראיון</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+              <div style="display:flex;gap:9px;padding:9px;background:var(--surface2);border-radius:var(--r)"><span>⏱️</span><span id="iv-tip1">שיטת STAR – מצב, משימה, פעולה, תוצאה</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:var(--surface2);border-radius:var(--r)"><span>📊</span><span id="iv-tip2">כמת הישגים במספרים תמיד</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:var(--surface2);border-radius:var(--r)"><span>🔍</span><span id="iv-tip3">חקור החברה מראש</span></div>
+              <div style="display:flex;gap:9px;padding:9px;background:var(--surface2);border-radius:var(--r)"><span>❓</span><span id="iv-tip4">הכן 3-5 שאלות למראיין</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end screen-app -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+const S = {
+  lang:'he', theme:'dark',
+  profile:{ name:'', domain:'', skills:[], strengths:[], exp:'', jobTypes:[] },
+  chat:[], obStep:1,
+  ivQList:[], ivIdx:0, ivScores:[],
+  recording:false, recSec:0, recInterval:null, mediaRec:null, audioChunks:[],
+  wizStep:1, tpl:'classic', cvLang:'en', expType:'both',
+};
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+function toast(msg,type='inf',ms=2800){
+  const c=document.getElementById('tw');
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;el.textContent=msg;c.appendChild(el);
+  setTimeout(()=>{el.style.animation='tOut .3s ease forwards';setTimeout(()=>el.remove(),300);},ms);
+}
+
+// ═══════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════
+function toggleTheme(){
+  S.theme=S.theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',S.theme==='light'?'light':'');
+  document.querySelectorAll('#theme-btn,.sb-theme-btn').forEach(b=>b.textContent=S.theme==='dark'?'🌙':'☀️');
+  toast(S.theme==='dark'?'🌙':'☀️','inf');
+}
+
+// ═══════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════
+const T={
+  he:{
+    authTitle:'התחל את המסע שלך', authSub:'הצטרף לאלפי סטודנטים ו-Juniors',
+    google:'המשך עם Google', or:'או', emailLbl:'אימייל', passLbl:'סיסמה', register:'הרשמה →',
+    authSwitch:'כבר רשום? כניסה',
+    dashSub:'הנה סיכום חיפוש העבודה שלך', chatBtn:'שוחח עם AI',
+    coachTitle:'🤖 מאמן קריירה AI', coachSub:'סוכן AI מתמחה בחיפוש עבודה וקורות חיים',
+    agentStatus:'מחובר ומוכן לעזור', badge1:'מומחה קריירה', badge2:'מומחה קו"ח',
+    clearChat:'נקה שיחה', welcomeMsg:'שלום! אני המאמן שלך. כאן לעזור בכל הקשור לחיפוש עבודה. במה נתחיל? 😊',
+    ivTitle:'🎯 מאמן ראיונות AI', ivSub:'תרגול כתוב + קולי עם משוב Claude',
+    ivStartBtn:'התחל תרגול', ivTypeLbl:'סוג הראיון', ivRoleLbl:'תפקיד',
+    ivCompanyLbl:'חברה (אופציונלי)', ivSubmitLbl:'שלח תשובה', ivSkipLbl:'דלג →',
+    modeTextLbl:'כתיבה', modeVoiceLbl:'קולי',
+    voiceStatusIdle:'לחץ להתחיל הקלטה', voiceStatusRec:'מקליט... לחץ לעצור', voiceStatusDone:'הקלטה הסתיימה ✅',
+    voiceSubmitLbl:'שלח הקלטה',
+    resTitle:'📄 בונה קו"ח', resSub:'כתוב מאפס, העלה קיים, או התאם למשרה',
+    tabScratch:'✍️ כתיבה מאפס', tabUpload:'📤 העלאת קו"ח קיים', tabMatch:'🎯 התאמה למשרה',
+    wl1:'תבנית', wl2:'שפה', wl3:'תוכן', wl4:'ייצוא',
+    tplLbl:'בחר תבנית עיצוב', previewLbl:'תצוגה מקדימה חיה',
+    enSub:'מומלץ לכל משרות ההייטק בישראל', heSub:'מתאים לחברות ממשלתיות',
+    bothLbl:'שתיהן', bothSub:'צור גרסה בעברית וגרסה באנגלית',
+    tipEngBody:'95% ממשרות ההייטק מצפות לקו"ח באנגלית. קו"ח באנגלית מראה מקצועיות.',
+    back:'חזרה', matchBtnLbl:'נתח התאמה',
+    matchEmptyT:'הדבק תיאור משרה', matchEmptyS:'ותקבל ניתוח מלא + המלצות קורסים',
+    matchLoadingT:'מנתח...', uploadTitle:'גרור קובץ קו"ח לכאן', uploadSub:'או לחץ לבחירת קובץ',
+    editCVLbl:'עריכת קו"ח', changeFile:'שנה קובץ', scannedOk:'נסרק בהצלחה',
+    jmTitle:'🎯 עדכן קו"ח לפי משרה', jmSub:'הדבק תיאור משרה וה-AI יעדכן לך אוטומטית',
+    jmBtn:'🤖 עדכן קו"ח אוטומטית', jmDiffTitle:'🎯 קו"ח עודכן לפי המשרה',
+    approveBtn:'✅ אשר שינויים', cancelBtn:'✕ בטל',
+    exportLangLbl:'שפת הקו"ח', exportLbl:'ייצוא קובץ', pdfSub:'מומלץ לרוב המשרות', wordSub:'לעריכה נוספת',
+    ivTip1:'שיטת STAR – מצב, משימה, פעולה, תוצאה', ivTip2:'כמת הישגים במספרים תמיד',
+    ivTip3:'חקור החברה מראש', ivTip4:'הכן 3-5 שאלות למראיין',
+    ivFbLbl:'משוב AI', ivResultsLbl:'סיכום ביצועים', ivSettingsLbl:'הגדרות', ivTipsLbl:'טיפים לראיון',
+    navDB:'דשבורד', navCoach:'מאמן קריירה AI', navResume:'בונה קו"ח', navIV:'מאמן ראיונות', navTheme:'מצב יום/לילה',
+  },
+  en:{
+    authTitle:'Start Your Journey', authSub:'Join thousands of students who found their first job',
+    google:'Continue with Google', or:'or', emailLbl:'Email', passLbl:'Password', register:'Sign Up →',
+    authSwitch:'Already registered? Login',
+    dashSub:"Here's your job search overview", chatBtn:'Chat with AI',
+    coachTitle:'🤖 AI Career Coach', coachSub:'AI Agent specialized in job search & resumes',
+    agentStatus:'Online and ready to help', badge1:'Career Expert', badge2:'Resume Expert',
+    clearChat:'Clear chat', welcomeMsg:"Hello! I'm your career coach. Here to help with your job search. Where shall we start? 😊",
+    ivTitle:'🎯 AI Interview Coach', ivSub:'Text + Voice practice with Claude feedback',
+    ivStartBtn:'Start Practice', ivTypeLbl:'Interview Type', ivRoleLbl:'Role',
+    ivCompanyLbl:'Company (optional)', ivSubmitLbl:'Submit Answer', ivSkipLbl:'Skip →',
+    modeTextLbl:'Text', modeVoiceLbl:'Voice',
+    voiceStatusIdle:'Click to start recording', voiceStatusRec:'Recording... click to stop', voiceStatusDone:'Recording done ✅',
+    voiceSubmitLbl:'Submit Recording',
+    resTitle:'📄 Resume Builder', resSub:'Write from scratch, upload existing, or tailor to a job',
+    tabScratch:'✍️ Write from Scratch', tabUpload:'📤 Upload Existing Resume', tabMatch:'🎯 Job Match',
+    wl1:'Template', wl2:'Language', wl3:'Content', wl4:'Export',
+    tplLbl:'Choose a design template', previewLbl:'Live Preview',
+    enSub:'Recommended for all tech jobs in Israel', heSub:'For government or specific roles',
+    bothLbl:'Both', bothSub:'Create Hebrew and English versions',
+    tipEngBody:'95% of tech jobs in Israel expect an English resume. It shows professionalism.',
+    back:'Back', matchBtnLbl:'Analyze Match',
+    matchEmptyT:'Paste job description', matchEmptyS:'Get full analysis + course recommendations',
+    matchLoadingT:'Analyzing...', uploadTitle:'Drag your resume here', uploadSub:'or click to choose file',
+    editCVLbl:'Edit Resume', changeFile:'Change file', scannedOk:'Scanned successfully',
+    jmTitle:'🎯 Update Resume for Job', jmSub:'Paste job description and AI will auto-update your resume',
+    jmBtn:'🤖 Auto-Update Resume', jmDiffTitle:'🎯 Resume updated for this job',
+    approveBtn:'✅ Approve Changes', cancelBtn:'✕ Cancel',
+    exportLangLbl:'Resume Language', exportLbl:'Export File', pdfSub:'Recommended for most jobs', wordSub:'For further editing',
+    ivTip1:'STAR method – Situation, Task, Action, Result', ivTip2:'Always quantify achievements with numbers',
+    ivTip3:'Research the company beforehand', ivTip4:'Prepare 3-5 questions for the interviewer',
+    ivFbLbl:'AI Feedback', ivResultsLbl:'Performance Summary', ivSettingsLbl:'Settings', ivTipsLbl:'Interview Tips',
+    navDB:'Dashboard', navCoach:'AI Career Coach', navResume:'Resume Builder', navIV:'Interview Coach', navTheme:'Dark/Light mode',
+  }
+};
+
+function setLang(l){
+  S.lang=l;
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='he'?'rtl':'ltr';
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  const t=T[l];
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  const ph=(id,val)=>{const el=document.getElementById(id);if(el)el.placeholder=val;};
+  set('at-title',t.authTitle);set('at-sub',t.authSub);set('at-google',t.google);
+  set('at-or',t.or);set('at-email-lbl',t.emailLbl);set('at-pass-lbl',t.passLbl);
+  set('at-register',t.register);set('at-switch',t.authSwitch);
+  set('dash-sub',t.dashSub);set('dash-chat-btn',t.chatBtn);
+  set('coach-title',t.coachTitle);set('coach-sub',t.coachSub);
+  set('agent-status',t.agentStatus);set('badge1',t.badge1);set('badge2',t.badge2);
+  set('coach-clear',t.clearChat);
+  set('iv-title',t.ivTitle);set('iv-sub',t.ivSub);set('iv-start-btn',t.ivStartBtn);
+  set('iv-type-lbl',t.ivTypeLbl);set('iv-role-lbl',t.ivRoleLbl);set('iv-company-lbl',t.ivCompanyLbl);
+  set('iv-submit-lbl',t.ivSubmitLbl);set('iv-skip-lbl',t.ivSkipLbl);
+  set('mode-text-lbl',t.modeTextLbl);set('mode-voice-lbl',t.modeVoiceLbl);
+  set('voice-submit-lbl',t.voiceSubmitLbl);
+  set('res-title',t.resTitle);set('res-sub',t.resSub);
+  set('tab-scratch-lbl',t.tabScratch);set('tab-upload-lbl',t.tabUpload);set('tab-match-lbl',t.tabMatch);
+  set('wl1',t.wl1);set('wl2',t.wl2);set('wl3',t.wl3);set('wl4',t.wl4);
+  set('tpl-lbl',t.tplLbl);set('preview-lbl',t.previewLbl);
+  set('en-sub',t.enSub);set('he-sub',t.heSub);set('both-lbl',t.bothLbl);set('both-sub',t.bothSub);
+  set('tip-eng-body',t.tipEngBody);
+  set('match-btn-lbl',t.matchBtnLbl);set('match-empty-t',t.matchEmptyT);set('match-empty-s',t.matchEmptyS);
+  set('match-loading-t',t.matchLoadingT);set('upload-title',t.uploadTitle);set('upload-sub2',t.uploadSub);
+  set('edit-cv-lbl',t.editCVLbl);set('change-file-btn',t.changeFile);set('scanned-ok',t.scannedOk);
+  set('jm-title',t.jmTitle);set('jm-sub',t.jmSub);set('jm-btn',t.jmBtn);
+  set('jm-diff-title',t.jmDiffTitle);set('approve-btn',t.approveBtn);set('cancel-btn',t.cancelBtn);
+  set('export-lang-lbl',t.exportLangLbl);set('export-lbl',t.exportLbl);
+  set('pdf-sub',t.pdfSub);set('word-sub',t.wordSub);
+  set('iv-tip1',t.ivTip1);set('iv-tip2',t.ivTip2);set('iv-tip3',t.ivTip3);set('iv-tip4',t.ivTip4);
+  set('iv-fb-lbl',t.ivFbLbl);set('iv-results-lbl',t.ivResultsLbl);
+  set('iv-settings-lbl',t.ivSettingsLbl);set('iv-tips-lbl',t.ivTipsLbl);
+  set('nav-db',t.navDB);set('nav-coach',t.navCoach);set('nav-resume',t.navResume);
+  set('nav-iv',t.navIV);set('nav-theme',t.navTheme);
+  // Suggestions
+  document.querySelectorAll('.s-he').forEach(el=>el.style.display=l==='he'?'inline':'none');
+  document.querySelectorAll('.s-en').forEach(el=>el.style.display=l==='en'?'inline':'none');
+  // Welcome msg
+  const wm=document.getElementById('welcome-msg');
+  if(wm) wm.textContent=t.welcomeMsg;
+  // Chat placeholder
+  ph('chat-inp',l==='he'?'שאל אותי כל שאלה...':'Ask me anything...');
+  // Voice status
+  set('voice-status',t.voiceStatusIdle);
+}
+
+// ═══════════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ═══════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goToOb(){ showScreen('screen-ob'); renderObStep(); }
+
+function navigate(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const labels={dashboard:T[S.lang].navDB,coach:T[S.lang].navCoach,resume:T[S.lang].navResume,interview:T[S.lang].navIV};
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.textContent.trim().startsWith(labels[p]?.slice(0,4)||'__')) n.classList.add('active');
+  });
+  if(p==='resume') initCVSkills();
+}
+
+// ═══════════════════════════════════════════════════
+// ONBOARDING DATA
+// ═══════════════════════════════════════════════════
+const DOMAINS=[
+  {icon:'🎨',name:'Frontend',sub:'React, HTML, CSS',key:'frontend'},
+  {icon:'⚙️',name:'Backend',sub:'Node.js, Python',key:'backend'},
+  {icon:'🔄',name:'Full Stack',sub:'גם וגם',key:'fullstack'},
+  {icon:'🤖',name:'Data / AI',sub:'Python, ML',key:'data'},
+  {icon:'☁️',name:'DevOps',sub:'Docker, AWS',key:'devops'},
+  {icon:'✏️',name:'UX/UI',sub:'Figma, Design',key:'ux'},
+  {icon:'📋',name:'Product',sub:'PM, Strategy',key:'product'},
+  {icon:'🔒',name:'Cyber',sub:'Security',key:'cyber'},
+  {icon:'🧪',name:'QA',sub:'Testing',key:'qa'},
+  {icon:'📱',name:'Mobile',sub:'iOS, Android',key:'mobile'},
+];
+const SKILL_CATS=[
+  {cat:'שפות',skills:['Python','JavaScript','TypeScript','Java','C++','C#','Go','Swift','Kotlin','PHP','Rust']},
+  {cat:'Frontend',skills:['React','Vue.js','Angular','HTML','CSS','Tailwind','Next.js','Redux']},
+  {cat:'Backend',skills:['Node.js','Express','Django','Flask','FastAPI','Spring']},
+  {cat:'Database',skills:['SQL','MySQL','PostgreSQL','MongoDB','Redis','Firebase']},
+  {cat:'DevOps & Cloud',skills:['Docker','Kubernetes','Git','GitHub','AWS','GCP','Linux','CI/CD']},
+  {cat:'AI & Data',skills:['Machine Learning','TensorFlow','PyTorch','Pandas','NumPy']},
+  {cat:'Design',skills:['Figma','Adobe XD','Canva']},
+];
+const STRENGTHS=[
+  {e:'🔥',n:'מוטיבציה גבוהה'},{e:'⚡',n:'מניע תהליכים'},
+  {e:'🤝',n:'עבודת צוות'},{e:'💡',n:'יצירתיות'},
+  {e:'🧩',n:'פתרון בעיות'},{e:'🚀',n:'למידה מהירה'},
+  {e:'🎯',n:'תשומת לב'},{e:'💬',n:'תקשורת טובה'},
+  {e:'⏰',n:'ניהול זמן'},{e:'🦅',n:'עצמאות'},
+  {e:'📊',n:'חשיבה אנליטית'},{e:'✅',n:'אמינות'},
+];
+const EXP_OPTS=[
+  {e:'🎓',n:'ללא ניסיון',k:'none'},{e:'📚',n:'פרויקטים בלבד',k:'projects'},
+  {e:'💼',n:'התמחות / Intern',k:'intern'},{e:'🌱',n:'עד שנה',k:'under1'},
+  {e:'📈',n:'1–2 שנים',k:'1to2'},{e:'⭐',n:'2–3 שנים',k:'2to3'},
+];
+const JOB_TYPES=[
+  {e:'⏰',n:'מלאה',k:'full'},{e:'🕐',n:'חלקית',k:'part'},
+  {e:'📅',n:'גמיש',k:'flex'},{e:'🏠',n:'Remote',k:'remote'},{e:'🔀',n:'Hybrid',k:'hybrid'},
+];
+
+// ═══════════════════════════════════════════════════
+// ONBOARDING RENDER
+// ═══════════════════════════════════════════════════
+function renderObStep(){
+  document.getElementById('ob-fill').style.width=(S.obStep/5*100)+'%';
+  document.getElementById('ob-step-info').textContent=S.lang==='he'?`שלב ${S.obStep} מתוך 5`:`Step ${S.obStep} of 5`;
+  const c=document.getElementById('ob-content');
+  if(S.obStep===1){
+    c.innerHTML=`
+      <div class="ob-q">${S.lang==='he'?'מה שמך? 👋':"What's your name? 👋"}</div>
+      <div class="ob-sub">${S.lang==='he'?'נתאים לך את כל האפליקציה אישית':'We\'ll personalize the entire app for you'}</div>
+      <input class="name-input" id="ob-name" placeholder="${S.lang==='he'?'הכנס שם מלא...':'Enter full name...'}" value="${S.profile.name}" oninput="S.profile.name=this.value">
+      <div class="ob-nav"><div></div><button class="btn btn-p btn-lg" onclick="obNext()">${S.lang==='he'?'הבא →':'Next →'}</button></div>`;
+    setTimeout(()=>document.getElementById('ob-name')?.focus(),100);
+  } else if(S.obStep===2){
+    c.innerHTML=`
+      <div class="ob-q">${S.lang==='he'?'באיזה תחום אתה מחפש?':'Which field are you targeting?'}</div>
+      <div class="ob-sub">${S.lang==='he'?'בחר את התחום שמעניין אותך':'Choose the field that interests you'}</div>
+      <div class="domain-grid">${DOMAINS.map(d=>`
+        <div class="domain-card${S.profile.domain===d.key?' selected':''}" onclick="selDomain('${d.key}',this)">
+          <div class="dc-icon">${d.icon}</div><div class="dc-name">${d.name}</div><div class="dc-sub">${d.sub}</div>
+        </div>`).join('')}</div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← ${S.lang==='he'?'חזרה':'Back'}</button><button class="btn btn-p btn-lg" onclick="obNext()">${S.lang==='he'?'הבא →':'Next →'}</button></div>`;
+  } else if(S.obStep===3){
+    c.innerHTML=`
+      <div class="ob-q">${S.lang==='he'?'מה הכישורים שלך? 🛠️':'What are your skills? 🛠️'}</div>
+      <div class="ob-sub">${S.lang==='he'?'חפש או בחר מהרשימה':'Search or choose from the list'}</div>
+      <div class="selected-count" id="sel-count">${S.lang==='he'?`נבחרו: ${S.profile.skills.length}`:`Selected: ${S.profile.skills.length}`}</div>
+      <div class="search-wrap"><span class="search-icon">🔍</span><input class="inp search-inp" placeholder="${S.lang==='he'?'חפש כישור...':'Search skill...'}" oninput="filterSkills(this.value)"></div>
+      <div class="skill-cats" id="skill-cats">${SKILL_CATS.map(cat=>`
+        <div><div class="skill-cat-title">${cat.cat}</div><div class="skill-chips">${cat.skills.map(s=>`<div class="skill-chip${S.profile.skills.includes(s)?' selected':''}" onclick="togSkill('${s}',this)">${s}</div>`).join('')}</div></div>`).join('')}</div>
+      <div class="ob-nav" style="margin-top:16px"><button class="btn btn-ghost" onclick="obBack()">← ${S.lang==='he'?'חזרה':'Back'}</button><button class="btn btn-p btn-lg" onclick="obNext()">${S.lang==='he'?'הבא →':'Next →'}</button></div>`;
+  } else if(S.obStep===4){
+    c.innerHTML=`
+      <div class="ob-q">${S.lang==='he'?'מה החוזקות שלך? 💪':'What are your strengths? 💪'}</div>
+      <div class="ob-sub">${S.lang==='he'?'בחר עד 5 חוזקות אישיות':'Choose up to 5 personal strengths'}</div>
+      <div class="strength-counter">${S.lang==='he'?'נבחרו':'Selected'} <span id="str-count">${S.profile.strengths.length}</span>/5</div>
+      <div class="strength-grid">${STRENGTHS.map(s=>`
+        <div class="strength-card${S.profile.strengths.includes(s.n)?' selected':''}${S.profile.strengths.length>=5&&!S.profile.strengths.includes(s.n)?' disabled':''}" onclick="togStrength('${s.n}',this)">
+          <div class="sc-emoji">${s.e}</div><div class="sc-name">${s.n}</div>
+        </div>`).join('')}</div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← ${S.lang==='he'?'חזרה':'Back'}</button><button class="btn btn-p btn-lg" onclick="obNext()">${S.lang==='he'?'הבא →':'Next →'}</button></div>`;
+  } else if(S.obStep===5){
+    c.innerHTML=`
+      <div class="ob-q">${S.lang==='he'?'ניסיון וסוג משרה 📋':'Experience & Job Type 📋'}</div>
+      <div class="ob-sub" style="margin-bottom:16px">${S.lang==='he'?'ספר לנו קצת על הניסיון שלך':'Tell us about your experience'}</div>
+      <div class="label">${S.lang==='he'?'רמת ניסיון':'Experience level'}</div>
+      <div class="exp-grid">${EXP_OPTS.map(e=>`
+        <div class="exp-card${S.profile.exp===e.k?' selected':''}" onclick="selExp('${e.k}',this)">
+          <div class="ec-icon">${e.e}</div><div class="ec-name">${e.n}</div>
+        </div>`).join('')}</div>
+      <div class="label" style="margin-top:18px">${S.lang==='he'?'סוג משרה מבוקש':'Desired job type'}</div>
+      <div class="jobtype-wrap">${JOB_TYPES.map(j=>`
+        <div class="jt-chip${S.profile.jobTypes.includes(j.k)?' selected':''}" onclick="togJobType('${j.k}',this)">
+          ${j.e} ${j.n}
+        </div>`).join('')}</div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← ${S.lang==='he'?'חזרה':'Back'}</button><button class="btn btn-p btn-lg" onclick="obFinish()">🚀 ${S.lang==='he'?'כניסה לאפליקציה!':'Enter App!'}</button></div>`;
+  } else if(S.obStep===6){
+    c.innerHTML=`
+      <div class="ob-finish">
+        <span class="ob-finish-icon">✅</span>
+        <div class="ob-finish-title">${S.lang==='he'?`הפרופיל שלך מוכן, ${S.profile.name}!`:`Your profile is ready, ${S.profile.name}!`}</div>
+        <div class="ob-finish-sub">${S.lang==='he'?'CareerUp יתאים לך את כל הכלים לפי המידע שמסרת':'CareerUp will personalize all tools based on your profile'}</div>
+        <button class="btn btn-p btn-lg" onclick="launchApp()">🚀 ${S.lang==='he'?'בואו נתחיל':'Let\'s go'}</button>
+      </div>`;
+  }
+}
+
+function selDomain(k,el){S.profile.domain=k;document.querySelectorAll('.domain-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
+function togSkill(s,el){if(S.profile.skills.includes(s)){S.profile.skills=S.profile.skills.filter(x=>x!==s);el.classList.remove('selected');}else{S.profile.skills.push(s);el.classList.add('selected');}const cnt=document.getElementById('sel-count');if(cnt)cnt.textContent=S.lang==='he'?`נבחרו: ${S.profile.skills.length}`:`Selected: ${S.profile.skills.length}`;}
+function filterSkills(q){document.querySelectorAll('#skill-cats .skill-chip').forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});}
+function togStrength(n,el){if(S.profile.strengths.includes(n)){S.profile.strengths=S.profile.strengths.filter(x=>x!==n);el.classList.remove('selected');}else{if(S.profile.strengths.length>=5)return;S.profile.strengths.push(n);el.classList.add('selected');}const cnt=document.getElementById('str-count');if(cnt)cnt.textContent=S.profile.strengths.length;document.querySelectorAll('.strength-card:not(.selected)').forEach(c=>c.classList.toggle('disabled',S.profile.strengths.length>=5));}
+function selExp(k,el){S.profile.exp=k;document.querySelectorAll('.exp-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');}
+function togJobType(k,el){if(S.profile.jobTypes.includes(k)){S.profile.jobTypes=S.profile.jobTypes.filter(x=>x!==k);el.classList.remove('selected');}else{S.profile.jobTypes.push(k);el.classList.add('selected');}}
+function obNext(){if(S.obStep===1&&!S.profile.name.trim()){toast(S.lang==='he'?'אנא הכנס שם':'Please enter name','wrn');return;}if(S.obStep===2&&!S.profile.domain){toast(S.lang==='he'?'בחר תחום':'Choose field','wrn');return;}S.obStep++;renderObStep();}
+function obBack(){if(S.obStep>1){S.obStep--;renderObStep();}}
+function obFinish(){if(!S.profile.exp){toast(S.lang==='he'?'בחר רמת ניסיון':'Choose experience level','wrn');return;}S.obStep=6;renderObStep();}
+
+function launchApp(){
+  showScreen('screen-app');
+  const d=S.profile;
+  const initials=d.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2)||'?';
+  const domainName=DOMAINS.find(x=>x.key===d.domain)?.name||'—';
+  const expLabel=EXP_OPTS.find(x=>x.k===d.exp)?.n||'—';
+  document.getElementById('sb-av').textContent=initials;
+  document.getElementById('sb-name').textContent=d.name||'—';
+  document.getElementById('sb-role').textContent=domainName;
+  document.getElementById('dash-hi').textContent=`${S.lang==='he'?'שלום':'Hello'}, ${d.name}! 👋`;
+  document.getElementById('p-name').textContent=d.name||'—';
+  document.getElementById('p-domain').textContent=domainName;
+  document.getElementById('p-exp').textContent=expLabel;
+  document.getElementById('p-skills-count').textContent=d.skills.length;
+  const dashSkills=document.getElementById('dash-skills');
+  if(d.skills.length>0) dashSkills.innerHTML=d.skills.map(s=>`<span class="chip on">${s}</span>`).join('');
+  const wm=document.getElementById('welcome-msg');
+  if(wm) wm.textContent=S.lang==='he'
+    ?`שלום ${d.name}! אני רואה שאתה מחפש עבודה בתחום ${domainName} עם ${d.skills.slice(0,3).join(', ')}. במה אוכל לעזור? 😊`
+    :`Hello ${d.name}! I see you're looking for work in ${domainName} with ${d.skills.slice(0,3).join(', ')}. How can I help? 😊`;
+  initCVSkills();
+  toast((S.lang==='he'?'ברוכה הבאה ל-CareerUp':'Welcome to CareerUp')+' 🎉','ok',4000);
+}
+
+// ═══════════════════════════════════════════════════
+// CHAT AI
+// ═══════════════════════════════════════════════════
+const SYSTEM=()=>{
+  const d=S.profile;
+  const domainName=DOMAINS.find(x=>x.key===d.domain)?.name||'Tech';
+  const expLabel=EXP_OPTS.find(x=>x.k===d.exp)?.n||'unknown';
+  return S.lang==='he'
+    ?`אתה CareerUp Agent – סוכן AI מתמחה בחיפוש עבודה, קורות חיים, ראיונות ובניית קריירה לסטודנטים ו-Juniors.\nמשתמש: ${d.name}, מחפש עבודה ב${domainName}, ניסיון: ${expLabel}, כישורים: ${d.skills.join(', ')}, חוזקות: ${d.strengths.join(', ')}.\nענה בעברית, פשוט וידידותי, נקודות, מעודד.`
+    :`You are CareerUp Agent – AI specialist in job search, resumes, interviews for students and Juniors.\nUser: ${d.name}, looking for work in ${domainName}, experience: ${expLabel}, skills: ${d.skills.join(', ')}, strengths: ${d.strengths.join(', ')}.\nAnswer in English, simple and friendly, bullet points, encouraging.`;
+};
+
+async function sendMsg(){
+  const inp=document.getElementById('chat-inp');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  addChatMsg('user',txt);
+  const typing=addTyping();
+  S.chat.push({role:'user',content:txt});
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:S.chat,system:SYSTEM()})});
+    const data=await r.json();
+    typing.remove();
+    const reply=data.reply||(S.lang==='he'?'שגיאה, נסה שוב.':'Error, please try again.');
+    S.chat.push({role:'assistant',content:reply});
+    addChatMsg('ai',reply);
+  }catch(e){typing.remove();addChatMsg('ai',S.lang==='he'?'שגיאת חיבור לשרת 🙏':'Server connection error 🙏');}
+}
+function addChatMsg(role,text){
+  const el=document.createElement('div');
+  el.className=`msg msg-${role}`;
+  el.innerHTML=`<div class="m-av">${role==='ai'?'🤖':'👤'}</div><div class="m-bubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  const msgs=document.getElementById('chat-msgs');
+  msgs.appendChild(el);msgs.scrollTop=msgs.scrollHeight;
+}
+function addTyping(){
+  const el=document.createElement('div');
+  el.className='msg msg-ai';
+  el.innerHTML=`<div class="m-av">🤖</div><div class="m-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  const msgs=document.getElementById('chat-msgs');
+  msgs.appendChild(el);msgs.scrollTop=msgs.scrollHeight;
+  return el;
+}
+function quickAsk(he,en){document.getElementById('chat-inp').value=S.lang==='he'?he:en;navigate('coach');setTimeout(sendMsg,100);}
+function clearChat(){S.chat=[];document.getElementById('chat-msgs').innerHTML=`<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble" id="welcome-msg">${T[S.lang].welcomeMsg}</div></div>`;toast(S.lang==='he'?'🗑️ שיחה נוקתה':'🗑️ Chat cleared','inf');}
+
+// ═══════════════════════════════════════════════════
+// RESUME
+// ═══════════════════════════════════════════════════
+function initCVSkills(){
+  const list=document.getElementById('cv-skills-list');
+  if(!list)return;
+  list.innerHTML=S.profile.skills.map(s=>`<span class="chip on">${s}</span>`).join('');
+  const pr=document.getElementById('pr-skills');
+  if(pr)pr.innerHTML=S.profile.skills.map(s=>`<span class="cv-skill">${s}</span>`).join('');
+}
+
+function switchResTab(t){
+  ['scratch','upload','match'].forEach(id=>{
+    document.getElementById('tab-'+id+'-content').style.display=id===t?'block':'none';
+  });
+  document.querySelectorAll('.mtab').forEach((btn,i)=>btn.classList.toggle('active',['scratch','upload','match'][i]===t));
+}
+
+function goWiz(step){
+  S.wizStep=step;
+  for(let i=1;i<=4;i++){
+    const s=document.getElementById('wstep'+i);if(s)s.style.display=i===step?'block':'none';
+    const ws=document.getElementById('ws'+i);if(ws)ws.className='ws '+(i<step?'done':i===step?'active':'');
+    const sep=document.getElementById('wsep'+i);if(sep)sep.className='ws-sep '+(i<step?'done':'');
+  }
+}
+
+function selectTpl(tpl,el){S.tpl=tpl;document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');toast('Template: '+tpl,'inf');}
+function selectCVLang(lang,el){S.cvLang=lang;document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');const msgs={en:S.lang==='he'?'קו"ח באנגלית ✅':'Resume in English ✅',he:S.lang==='he'?'קו"ח בעברית':'Hebrew resume',both:S.lang==='he'?'שתי גרסאות!':'Both versions!'};toast(msgs[lang],'ok');}
+function setExpType(t,el){S.expType=t;document.querySelectorAll('.et-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');const e=document.getElementById('exp-section');const p=document.getElementById('proj-section');if(e&&p){if(t==='exp'){e.style.display='block';p.style.display='none';}else if(t==='proj'){e.style.display='none';p.style.display='block';}else{e.style.display='block';p.style.display='block';}}}
+function toggleSection(header){const arrow=header.querySelector('.fs-arrow');const body=header.nextElementSibling;const isOpen=arrow.classList.contains('open');arrow.classList.toggle('open',!isOpen);body.style.display=isOpen?'none':'block';}
+
+function updatePreview(){
+  const name=document.getElementById('cv-name')?.value;
+  const role=document.getElementById('cv-role')?.value;
+  const summary=document.getElementById('cv-summary')?.value;
+  if(name&&document.getElementById('pr-name'))document.getElementById('pr-name').textContent=name;
+  if(role&&document.getElementById('pr-role'))document.getElementById('pr-role').textContent=role;
+  if(summary&&document.getElementById('pr-summary'))document.getElementById('pr-summary').textContent=summary;
+}
+
+function aiImprove(field){toast(`✨ AI ${S.lang==='he'?'משפר':'improving'}...`,'inf');setTimeout(()=>toast(S.lang==='he'?'✅ שופר בהצלחה!':'✅ Improved!','ok'),1500);}
+function improveAll(){toast(`✨ AI ${S.lang==='he'?'משפר הכל':'improving all'}...`,'inf');setTimeout(()=>toast(S.lang==='he'?'✅ הכל שופר!':'✅ All improved!','ok'),2200);}
+function addEntry(t){toast(`+ ${S.lang==='he'?'נוסף':'Added'}`,'inf');}
+function addSkillPrompt(){const s=prompt(S.lang==='he'?'שם הכישור:':'Skill name:');if(s){const list=document.getElementById('cv-skills-list');if(list){const chip=document.createElement('span');chip.className='chip on';chip.textContent=s;list.appendChild(chip);}toast(`✅ ${s}`,'ok');}}
+function exportFile(t){toast(`⬇️ ${S.lang==='he'?'מוריד':'Downloading'} ${t.toUpperCase()}...`,'ok');}
+function handleFile(file){if(!file)return;toast(S.lang==='he'?'📤 מעלה קובץ...':'📤 Uploading...',  'inf');setTimeout(()=>{document.getElementById('upload-analysis').style.display='block';toast(S.lang==='he'?'✅ נסרק בהצלחה!':'✅ Scanned successfully!','ok');},1500);}
+function handleDrop(e){e.preventDefault();document.getElementById('upload-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)handleFile(f);}
+function resetUpload(){document.getElementById('upload-analysis').style.display='none';toast(S.lang==='he'?'קובץ הוסר':'File removed','inf');}
+function updateCVForJob(){const d=document.getElementById('upload-job-desc')?.value?.trim();if(!d||d.length<20){toast(S.lang==='he'?'⚠️ הדבק תיאור משרה':'⚠️ Paste job description','wrn');return;}toast(S.lang==='he'?'🤖 מעדכן קו"ח...':'🤖 Updating resume...','inf');setTimeout(()=>{document.getElementById('jm-diff').style.display='block';toast(S.lang==='he'?'✅ קו"ח עודכן!':'✅ Resume updated!','ok');},2000);}
+
+async function analyzeMatch(){
+  const jobDesc=document.getElementById('job-desc-match')?.value?.trim();
+  if(!jobDesc||jobDesc.length<20){toast(S.lang==='he'?'⚠️ הדבק תיאור משרה':'⚠️ Paste job description','wrn');return;}
+  document.getElementById('match-empty-state').style.display='none';
+  document.getElementById('match-loading').style.display='block';
+  document.getElementById('match-results').style.display='none';
+  const MY_CV=`${S.profile.name}|${DOMAINS.find(x=>x.key===S.profile.domain)?.name||'Tech'}|כישורים:${S.profile.skills.join(',')}|${EXP_OPTS.find(x=>x.k===S.profile.exp)?.n||'Junior'}`;
+  try{
+    const r=await fetch('/api/job-match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cvText:MY_CV,jobDescription:jobDesc})});
+    const d=await r.json();
+    renderMatch(d);
+    toast(S.lang==='he'?'🎯 ניתוח הושלם!':'🎯 Analysis complete!','ok');
+  }catch(e){
+    toast(S.lang==='he'?'⚠️ שגיאה':'⚠️ Error','wrn');
+    document.getElementById('match-loading').style.display='none';
+    document.getElementById('match-empty-state').style.display='block';
+  }
+}
+
+function renderMatch(d){
+  document.getElementById('match-loading').style.display='none';
+  const score=d.matchScore||0;
+  const res=document.getElementById('match-results');
+  res.style.display='flex';
+  res.innerHTML=`
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+        <div class="ring-wrap">
+          <svg width="88" height="88" viewBox="0 0 88 88"><circle cx="44" cy="44" r="35" fill="none" stroke="var(--border)" stroke-width="6"/><circle cx="44" cy="44" r="35" fill="none" stroke="url(#gr3)" stroke-width="6" stroke-dasharray="220" stroke-dashoffset="${220-(220*score/100)}" stroke-linecap="round"/><defs><linearGradient id="gr3" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#34e8a0"/><stop offset="100%" stop-color="#6c5fff"/></linearGradient></defs></svg>
+          <div class="ring-inner"><div class="ring-num" style="color:var(--p3)">${score}%</div><div class="ring-lbl">${S.lang==='he'?'התאמה':'Match'}</div></div>
+        </div>
+        <div><div style="font-size:14px;font-weight:800;margin-bottom:4px">${d.matchTitle||''}</div><div style="font-size:12px;color:var(--muted)">${d.matchSub||''}</div></div>
+      </div>
+      ${(d.skills||[]).map(s=>`<div class="sbar-row"><div class="sbar-lbl">${s.name}</div><div class="sbar-track"><div class="sbar-fill" style="width:${s.myLevel}%;background:${s.myLevel>=s.required?'var(--p3)':'var(--p2)'}"></div></div><div class="sbar-val" style="color:${s.myLevel>=s.required?'var(--p3)':'var(--p2)'}">${s.myLevel}</div></div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="label">🎓 ${S.lang==='he'?'פערים + קורסים':'Gaps + Courses'}</div>
+      ${(d.gaps||[]).map(g=>`
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);padding:14px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+            <div style="font-size:13px;font-weight:700">${g.skill}</div>
+            <span class="badge b-g">+${g.afterCourse-g.currentChance}% 🚀</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:9px">${g.reason}</div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace">
+            <span>${S.lang==='he'?'עכשיו':'Now'}: ${g.currentChance}%</span>
+            <span>${S.lang==='he'?'אחרי':'After'}: ${g.afterCourse}%</span>
+          </div>
+          <div style="height:22px;background:var(--surface3);border-radius:8px;overflow:hidden;position:relative;margin:6px 0">
+            <div style="position:absolute;height:100%;width:${g.currentChance}%;background:linear-gradient(90deg,var(--p2),#ff8fab);border-radius:8px"></div>
+            <div style="position:absolute;height:100%;width:${g.afterCourse}%;background:linear-gradient(90deg,var(--p3),#38f9d7);border-radius:8px;opacity:.55"></div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:var(--surface);border-radius:var(--r);border:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:var(--pl);margin-bottom:3px">📚 ${S.lang==='he'?'קורס מומלץ':'Recommended Course'}</div>
+            <div style="font-size:13px;font-weight:700">${g.courseName}</div>
+            <div style="display:flex;gap:7px;margin-top:5px"><span class="badge b-p">${g.platform}</span><span class="badge b-a">${g.duration}</span></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// INTERVIEW
+// ═══════════════════════════════════════════════════
+const IV_QS={
+  behavioral:{he:['ספר על פרויקט שאתה גאה בו. מה האתגרים ואיך התגברת?','תאר קונפליקט עם עמית. איך פתרת?','ספר על כישלון ומה למדת.','מה ההישג הגדול ביותר שלך?','איך מתמודד עם לחץ ועומסי עבודה?'],en:['Tell about a project you\'re proud of. What challenges did you face?','Describe a conflict with a colleague. How did you resolve it?','Tell about a failure and what you learned.','What is your greatest achievement so far?','How do you handle pressure and heavy workloads?']},
+  hr:{he:['למה אתה מחפש עבודה עכשיו?','ספר לי על עצמך','איפה אתה רואה את עצמך עוד 3 שנים?','מה החוזקות והחולשות שלך?','למה אתה רוצה לעבוד אצלנו?'],en:['Why are you looking for a job now?','Tell me about yourself','Where do you see yourself in 3 years?','What are your strengths and weaknesses?','Why do you want to work at our company?']},
+};
+
+function startInterview(){
+  const type=document.getElementById('iv-type').value;
+  const qSet=IV_QS[type]||IV_QS.behavioral;
+  S.ivQList=qSet[S.lang]||qSet.he;
+  S.ivIdx=0;S.ivScores=[];
+  document.getElementById('iv-panel').style.display='block';
+  document.getElementById('iv-feedback').style.display='none';
+  document.getElementById('iv-results').style.display='none';
+  showQ();
+  toast(S.lang==='he'?'🎯 ראיון התחיל! בהצלחה!':'🎯 Interview started! Good luck!','inf');
+}
+
+function showQ(){
+  document.getElementById('iv-qtext').textContent=S.ivQList[S.ivIdx];
+  document.getElementById('iv-qnum').textContent=`${S.ivIdx+1}/${S.ivQList.length}`;
+  const el=document.getElementById('iv-ans');if(el)el.value='';
+  document.getElementById('iv-feedback').style.display='none';
+  S.recording=false;
+  const mb=document.getElementById('mic-btn');if(mb){mb.className='mic-btn';mb.textContent='🎤';}
+  const vs=document.getElementById('voice-status');if(vs)vs.textContent=T[S.lang].voiceStatusIdle;
+  const vt=document.getElementById('voice-timer');if(vt)vt.style.display='none';
+  const vsb=document.getElementById('voice-submit-btn');if(vsb)vsb.style.display='none';
+  const wf=document.getElementById('waveform');if(wf)wf.classList.remove('active');
+}
+
+function setIVMode(m){
+  document.getElementById('iv-text-mode').style.display=m==='text'?'block':'none';
+  document.getElementById('iv-voice-mode').style.display=m==='voice'?'block':'none';
+  document.getElementById('mode-text').className='vm-btn'+(m==='text'?' active':'');
+  document.getElementById('mode-voice').className='vm-btn'+(m==='voice'?' active':'');
+}
+
+function toggleRec(){S.recording?stopRec():startRec();}
+
+function startRec(){
+  S.recording=true;S.recSec=0;
+  document.getElementById('mic-btn').className='mic-btn rec';
+  document.getElementById('mic-btn').textContent='⏹';
+  const vs=document.getElementById('voice-status');
+  if(vs){vs.className='voice-status rec';vs.textContent=T[S.lang].voiceStatusRec;}
+  document.getElementById('voice-timer').style.display='block';
+  document.getElementById('waveform').classList.add('active');
+  S.recInterval=setInterval(()=>{S.recSec++;const m=Math.floor(S.recSec/60).toString().padStart(2,'0');const s=(S.recSec%60).toString().padStart(2,'0');document.getElementById('voice-timer').textContent=`${m}:${s}`;},1000);
+  if(navigator.mediaDevices?.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{S.mediaRec=new MediaRecorder(stream);S.audioChunks=[];S.mediaRec.ondataavailable=e=>S.audioChunks.push(e.data);S.mediaRec.start();}).catch(()=>toast(S.lang==='he'?'מיקרופון לא זמין':'Microphone unavailable','wrn'));
+  }
+}
+
+function stopRec(){
+  S.recording=false;clearInterval(S.recInterval);
+  document.getElementById('mic-btn').className='mic-btn';
+  document.getElementById('mic-btn').textContent='🎤';
+  const vs=document.getElementById('voice-status');
+  if(vs){vs.className='voice-status';vs.textContent=T[S.lang].voiceStatusDone;}
+  document.getElementById('waveform').classList.remove('active');
+  document.getElementById('voice-submit-btn').style.display='inline-flex';
+  if(S.mediaRec?.state==='recording')S.mediaRec.stop();
+}
+
+function submitVoice(){
+  const placeholder=S.lang==='he'
+    ?`[תשובה קולית – ${S.recSec} שניות] – בגרסה מלאה תתומלל עם Whisper API`
+    :`[Voice answer – ${S.recSec} seconds] – In production, transcribed with Whisper API`;
+  const el=document.getElementById('iv-ans');if(el)el.value=placeholder;
+  setIVMode('text');
+  toast(S.lang==='he'?'🎤 הקלטה נשלחה לניתוח':'🎤 Recording sent for analysis','ok');
+  submitIVAnswer();
+}
+
+async function submitIVAnswer(){
+  const ans=document.getElementById('iv-ans')?.value?.trim();
+  if(!ans){toast(S.lang==='he'?'⚠️ כתוב תשובה':'⚠️ Write an answer','wrn');return;}
+  const btn=document.getElementById('iv-submit-btn');
+  btn.innerHTML='<div class="spin"></div>';btn.disabled=true;
+  try{
+    const r=await fetch('/api/interview-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:S.ivQList[S.ivIdx],answer:ans,role:document.getElementById('iv-role').value,lang:S.lang})});
+    const d=await r.json();
+    const scoreMatch=d.reply.match(/ציון[:\s]+(\d+)|score[:\s]+(\d+)/i);
+    const score=scoreMatch?parseInt(scoreMatch[1]||scoreMatch[2]):75;
+    S.ivScores.push(score);
+    const color=score>=80?'var(--p3)':score>=60?'var(--amber)':'var(--p2)';
+    document.getElementById('iv-feedback').style.display='block';
+    document.getElementById('iv-feedback-content').innerHTML=`
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px;background:var(--surface2);border-radius:var(--r)">
+        <div style="font-size:28px;font-weight:900;color:${color}">${score}</div>
+        <div style="font-size:12px;color:var(--muted)">${S.lang==='he'?'מתוך':'out of'} 100</div>
+      </div>
+      <div style="font-size:13px;line-height:1.7">${d.reply.replace(/\n/g,'<br>').replace(/ציון[:\s]+\d+|score[:\s]+\d+/gi,'')}</div>
+      <button class="btn btn-p btn-full" style="margin-top:12px" onclick="ivNextQ()">${S.lang==='he'?'שאלה הבאה →':'Next Question →'}</button>`;
+    toast(`✅ ${S.lang==='he'?'ציון':'Score'}: ${score}/100`,'ok');
+  }catch(e){toast(S.lang==='he'?'⚠️ שגיאה':'⚠️ Error','wrn');}
+  finally{document.getElementById('iv-submit-lbl').textContent=T[S.lang].ivSubmitLbl;btn.disabled=false;}
+}
+
+function ivNextQ(){S.ivIdx++;if(S.ivIdx>=S.ivQList.length){showIVResults();return;}showQ();}
+
+function showIVResults(){
+  document.getElementById('iv-panel').style.display='none';
+  document.getElementById('iv-feedback').style.display='none';
+  const avg=S.ivScores.length?Math.round(S.ivScores.reduce((a,b)=>a+b)/S.ivScores.length):0;
+  const best=Math.max(...S.ivScores),worst=Math.min(...S.ivScores);
+  const color=avg>=80?'var(--p3)':avg>=60?'var(--amber)':'var(--p2)';
+  document.getElementById('iv-results').style.display='block';
+  document.getElementById('iv-results-content').innerHTML=`
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:44px;margin-bottom:6px">${avg>=80?'🏆':avg>=60?'💪':'📈'}</div>
+      <div style="font-size:36px;font-weight:900;color:${color}">${avg}%</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">${S.lang==='he'?'ממוצע':'Average'} · ${S.ivScores.length} ${S.lang==='he'?'שאלות':'questions'}</div>
+    </div>
+    <div class="sbar-row"><div class="sbar-lbl">🏆 ${S.lang==='he'?'הכי טוב':'Best'}</div><div class="sbar-track"><div class="sbar-fill" style="width:${best}%;background:var(--p3)"></div></div><div class="sbar-val" style="color:var(--p3)">${best}</div></div>
+    <div class="sbar-row"><div class="sbar-lbl">📊 ${S.lang==='he'?'ממוצע':'Average'}</div><div class="sbar-track"><div class="sbar-fill" style="width:${avg}%;background:var(--p)"></div></div><div class="sbar-val" style="color:var(--p)">${avg}</div></div>
+    <div class="sbar-row"><div class="sbar-lbl">💡 ${S.lang==='he'?'לשיפור':'Improve'}</div><div class="sbar-track"><div class="sbar-fill" style="width:${worst}%;background:var(--p2)"></div></div><div class="sbar-val" style="color:var(--p2)">${worst}</div></div>
+    <button class="btn btn-p btn-full" style="margin-top:14px" onclick="startInterview()">🔄 ${S.lang==='he'?'תרגול נוסף':'Practice Again'}</button>`;
+  toast(`🏆 ${S.lang==='he'?'סיכום':'Summary'}: ${avg}%`,'ok',5000);
+}
+</script>
+</body>
+</html>
