@@ -1145,28 +1145,35 @@
     // ═══════════════════════════════════════════════════
     // CHAT AI
     // ═══════════════════════════════════════════════════
-    async function sendMsg(){
-        const inp=document.getElementById('chat-inp');
-        const txt=inp.value.trim();
-        if(!txt)return;
-        inp.value='';
-        addChatMsg('user',txt);
-        const typing=addTyping();
-        S.chat.push({role:'user',content:txt});
-        try{
-            const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:S.chat,system:"You are an AI."})});
-            const data=await r.json();
-            typing.remove();
-            const reply=data.reply||('שגיאה, נסה שוב.');
-            S.chat.push({role:'assistant',content:reply});
-            addChatMsg('ai',reply);
-        }catch(e){
-            setTimeout(()=> {
-                typing.remove();
-                addChatMsg('ai','מעולה. בוא נתמקד בזה. משהו נוסף?');
-            }, 1000);
-        }
-    }
+  async function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  const msg = inp.value.trim();
+  if (!msg) return;
+
+  // הצגת הודעת המשתמש במסך
+  const chatMsgs = document.getElementById('chat-msgs');
+  chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
+  inp.value = '';
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+  try {
+    // קריאה לשרת האמיתי
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    
+    const data = await response.json();
+    
+    // הצגת תשובת ה-AI האמיתית
+    chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">${data.reply}</div></div>`;
+    addXP(5); // בונוס XP על שיחה
+  } catch (err) {
+    chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">אופס, ה-AI שלי נרדם לרגע. נסי שוב?</div></div>`;
+  }
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
     function addChatMsg(role,text){
         const el=document.createElement('div');
         el.className=`msg msg-${role}`;
@@ -1234,30 +1241,46 @@
         }, 1800);
     }
 
-    async function analyzeMatch(){
-        const jobDesc=document.getElementById('job-desc-match')?.value?.trim();
-        if(!jobDesc||jobDesc.length<20){toast('⚠️ הדבק תיאור משרה מלא או משוך מלינק','wrn');return;}
-        document.getElementById('match-empty-state').style.display='none';
-        document.getElementById('match-loading').style.display='block';
-        document.getElementById('match-results').style.display='none';
-
-        setTimeout(()=>{
-            renderMatch({
-                matchScore: 68, matchTitle: "Product Manager (Cloud/UX)", matchSub: "דרישות גבוהות ב-GCP ו-Agile",
-                skills: [
-                    {name: "GCP / Cloud", myLevel: 80, required: 60},
-                    {name: "Agile / Jira", myLevel: 30, required: 85},
-                    {name: "UX/UI (Figma)", myLevel: 70, required: 50}
-                ],
-                gaps: [
-                    {skill: "מתודולוגיות Agile ו-Jira", reason: "חובה לניהול פרויקטים ומשימות במשרה זו", currentChance: 68, afterCourse: 85, courseName: "Agile Project Management & Jira", platform: "Udemy", duration: "12 שעות"}
-                ]
-            });
-            toast('🎯 ניתוח הושלם בהצלחה!','ok');
-            addXP(25);
-        }, 2000);
+   async function analyzeMatch() {
+    const jobDesc = document.getElementById('job-desc-match')?.value?.trim();
+    if (!jobDesc || jobDesc.length < 20) {
+        toast('⚠️ הדבק תיאור משרה מלא או משוך מלינק', 'wrn');
+        return;
     }
 
+    // שינוי ה-UI למצב טעינה
+    document.getElementById('match-empty-state').style.display = 'none';
+    document.getElementById('match-loading').style.display = 'block';
+    document.getElementById('match-results').style.display = 'none';
+
+    try {
+        // קריאה אמיתית לשרת שבנית בתיקיית api
+        const response = await fetch('/api/job-match', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cvText: S.profile.skills.join(', '), // כאן כדאי לשלוח טקסט מלא של קו"ח אם יש לך
+                jobDescription: jobDesc
+            })
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        
+        // שליחת הנתונים האמיתיים מה-AI לפונקציית הרינדור
+        renderMatch(data);
+        
+        toast('🎯 ניתוח AI הושלם!', 'ok');
+        addXP(30);
+
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('match-loading').style.display = 'none';
+        document.getElementById('match-empty-state').style.display = 'block';
+        toast('❌ שגיאה בחיבור ל-AI. ודאי שהגדרת מפתח ב-Vercel', 'wrn');
+    }
+}
     function renderMatch(d){
         document.getElementById('match-loading').style.display='none';
         const score=d.matchScore||0;
