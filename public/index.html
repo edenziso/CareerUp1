@@ -1145,25 +1145,44 @@
     // ═══════════════════════════════════════════════════
     // CHAT AI
     // ═══════════════════════════════════════════════════
-  async function sendMsg() {
+ async function sendMsg() {
   const inp = document.getElementById('chat-inp');
   const msg = inp.value.trim();
   if (!msg) return;
 
-  // הצגת הודעת המשתמש במסך
   const chatMsgs = document.getElementById('chat-msgs');
+  
+  // הוספת הודעת המשתמש
   chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
   inp.value = '';
   chatMsgs.scrollTop = chatMsgs.scrollHeight;
 
+  // הוספת אנימציית "טוען..."
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'msg msg-ai';
+  typingDiv.innerHTML = `<div class="m-av">🤖</div><div class="m-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  chatMsgs.appendChild(typingDiv);
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
   try {
-    // קריאה לשרת האמיתי
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: msg })
     });
     
+    const data = await response.json();
+    
+    // הסרת אנימציית הטעינה והצגת התשובה
+    typingDiv.remove();
+    chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${data.reply.replace(/\n/g, '<br>')}</div></div>`;
+    addXP(10); 
+  } catch (err) {
+    typingDiv.remove();
+    chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">שגיאה בחיבור לשרת. ודאי שהקובץ api/chat.js קיים ב-GitHub.</div></div>`;
+  }
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
     const data = await response.json();
     
     // הצגת תשובת ה-AI האמיתית
