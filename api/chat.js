@@ -6,15 +6,16 @@ export default async function handler(req, res) {
   try {
     const { message } = req.body;
     
-    // קורא רק את המפתח החדש
-    const apiKey = process.env.CLAUDE_API_KEY;
+    // שולף את המפתח החוקי שלך מ-Vercel
+    const apiKey = process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY;
     
     if (!apiKey) {
-      return res.status(200).json({ reply: '🚨 השרת לא מצא את המפתח. ודאי שקוראים לו CLAUDE_API_KEY ב-Vercel.' });
+      return res.status(200).json({ reply: '🚨 השרת לא מוצא את מפתח ה-API.' });
     }
 
-    const systemPrompt = `אתה CareerUp Agent, מומחה קריירה. ענה בעברית מקצועית ועם Markdown.`;
+    const systemPrompt = `אתה CareerUp Agent, מומחה קריירה. תענה בעברית, בצורה מקצועית ותשתמש ב-Markdown לעיצוב.`;
 
+    // הפנייה הישירה לקלוד
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -23,7 +24,7 @@ export default async function handler(req, res) {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-latest", // המודל הכי חזק ששילמת עליו!
+        model: "claude-sonnet-4-6", // 🚀 הנה הקסם! המודל הכי עדכני וחזק של 2026
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: "user", content: message }]
@@ -32,14 +33,15 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // הוספנו את המילה "מעודכנת" כדי שנדע שהקוד התחלף!
+    // הדפסת שגיאות של קלוד (כדי שנהיה בטוחות שהחלפנו)
     if (data.error) {
-       return res.status(200).json({ reply: `🚨 שגיאה מעודכנת מאנתרופיק: ${data.error.message}` });
+       return res.status(200).json({ reply: `🚨 שגיאה מאנתרופיק: ${data.error.message}` });
     }
 
+    // הכל עבד פיקס!
     res.status(200).json({ reply: data.content[0].text });
 
   } catch (error) {
-    res.status(200).json({ reply: `🚨 שגיאת שרת מעודכנת: ${error.message}` });
+    res.status(200).json({ reply: `🚨 שגיאת רשת בשרת: ${error.message}` });
   }
 }
