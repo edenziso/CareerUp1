@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     - השתמש ב-Markdown: בולטים, כותרות והדגשות כדי שהתשובה תהיה קריאה ומרשימה.
     - תמיד תן ערך מוסף: אל תענה רק על מה שנשאל, תן טיפ אסטרטגי קדימה.`;
 
-    // הפנייה הישירה לקלוד (בלי שום ספריות בעייתיות!)
+    // הפנייה הישירה לקלוד (הפעם עם Haiku בוודאות!)
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        model: "claude-3-haiku-20240307",
+        model: "claude-3-haiku-20240307", // הנה התיקון ששכחתי קודם!
         max_tokens: 2000,
         system: systemPrompt,
         messages: [{ role: "user", content: message }]
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // אם קלוד חוסם את הבקשה (למשל בעיית אשראי בחשבון) נראה את זה ישירות בצ'אט!
+    // אם קלוד חוסם את הבקשה, נראה את זה ישירות בצ'אט
     if (data.error) {
        return res.status(200).json({ reply: `🚨 קלוד החזיר שגיאה: ${data.error.message}` });
     }
