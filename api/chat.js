@@ -1,27 +1,20 @@
-import Anthropic from '@anthropic-ai/sdk';
-
 export default async function handler(req, res) {
-  // 1. בדיקה שהבקשה מגיעה בפורמט הנכון
+  // מוודא שהבקשה הגיעה מהצ'אט
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(200).json({ reply: 'שגיאה: שיטה לא מורשית' });
   }
 
   try {
     const { message } = req.body;
     
-    // 2. חיפוש המפתח - מושך גם את השם החדש וגם את הישן ליתר ביטחון
+    // שולף את המפתח (תומך בשני השמות)
     const apiKey = process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY;
     
     if (!apiKey) {
-      // אם אין מפתח, נחזיר את זה כתשובה בתוך הצ'אט!
-      return res.status(200).json({ reply: '🚨 שגיאת שרת: חסר מפתח API ב-Vercel (CLAUDE_API_KEY).' });
+      return res.status(200).json({ reply: '🚨 השרת לא מוצא את מפתח ה-API. ודאי שהוא מוגדר ב-Vercel.' });
     }
 
-    const anthropic = new Anthropic({
-      apiKey: apiKey,
-    });
-
-    // 3. ה-Mega-Prompt (הוראות הסוכן)
+    // המוח המטורף של הסוכן
     const systemPrompt = `אתה CareerUp Agent, המומחה המוביל בישראל לייעוץ קריירה בהייטק. 
     התפקיד שלך הוא לספק תשובות ברמה הגבוהה ביותר בשוק בנושאים:
     1. כתיבת קו"ח (ATS): שימוש במילות מפתח, הדגשת הישגים כמותיים, ומבנה מקצועי.
@@ -34,21 +27,34 @@ export default async function handler(req, res) {
     - השתמש ב-Markdown: בולטים, כותרות והדגשות כדי שהתשובה תהיה קריאה ומרשימה.
     - תמיד תן ערך מוסף: אל תענה רק על מה שנשאל, תן טיפ אסטרטגי קדימה.`;
 
-    // 4. קריאה למודל הכי חזק של קלוד (Sonnet 3.5)
-    const msg = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
-      max_tokens: 2000,
-      temperature: 0.7,
-      system: systemPrompt,
-      messages: [{ role: "user", content: message }],
+    // הפנייה הישירה לקלוד (בלי שום ספריות בעייתיות!)
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "claude-3-5-sonnet-20240620", // המודל הכי חזק 
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: message }]
+      })
     });
 
-    // 5. הכל עבד! מחזירים את התשובה
-    res.status(200).json({ reply: msg.content[0].text });
+    const data = await response.json();
+
+    // אם קלוד חוסם את הבקשה (למשל בעיית אשראי בחשבון) נראה את זה ישירות בצ'אט!
+    if (data.error) {
+       return res.status(200).json({ reply: `🚨 קלוד החזיר שגיאה: ${data.error.message}` });
+    }
+
+    // הכל עבד פיקס!
+    res.status(200).json({ reply: data.content[0].text });
 
   } catch (error) {
-    // 6. תפיסת שגיאות - אם קלוד דוחה את הבקשה, הטקסט יודפס באתר שלך!
-    console.error("Claude API Error:", error);
-    res.status(200).json({ reply: `🚨 שגיאה מהשרת של קלוד: ${error.message}` });
+    // תופס שגיאות רשת אחרות
+    res.status(200).json({ reply: `🚨 שגיאת רשת בשרת: ${error.message}` });
   }
 }
