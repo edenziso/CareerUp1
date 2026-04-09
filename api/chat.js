@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     const { message } = req.body;
-    const apiKey = process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.CLAUDE_API_KEY 
 
     if (!apiKey) {
       return res.status(200).json({ reply: '🚨 השרת לא מוצא את מפתח ה-API.' });
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        model: "claude-3-haiku-20240307", // מודל חלופי סופר מהיר וחינמי!
+        model: "claude-3-5-sonnet-latest", // מודל חלופי סופר מהיר וחינמי!
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: "user", content: message }]
