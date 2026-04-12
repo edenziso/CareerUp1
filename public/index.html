@@ -1117,38 +1117,44 @@
     // ═══════════════════════════════════════════════════
     // AI CHAT (Connected to Backend)
     // ═══════════════════════════════════════════════════
-    async function sendMsg() {
-        const inp = document.getElementById('chat-inp');
-        const msg = inp.value.trim();
-        if (!msg) return;
+  async function aiImprove(inputId) {
+        const inputEl = document.getElementById(inputId);
+        if(!inputEl) return;
+        const currentValue = inputEl.value || inputEl.placeholder;
 
-        const chatMsgs = document.getElementById('chat-msgs');
-        chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
-        inp.value = '';
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        toast(`✨ ה-AI מנסח מחדש...`, 'inf');
 
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'msg msg-ai';
-        typingDiv.innerHTML = `<div class="m-av">🤖</div><div class="m-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-        chatMsgs.appendChild(typingDiv);
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        // פקודת ה"שתק" שמכריחה את קלוד להיות ענייני ולא לחפור
+        const strictRules = "הוראת מערכת קריטית: פעל כ-API בלבד. עליך להחזיר *אך ורק* את התשובה הסופית. ללא Markdown, ללא כוכביות, ללא סולמיות, ללא אפשרויות בחירה, ללא הסברים וללא טיפים. רק מחרוזת טקסט אחת נקייה שתיכנס ישירות לשדה קלט.";
+
+        let promptText = "";
+        if (inputId === 'cv-name') promptText = `${strictRules}\nכתוב את השם הזה באנגלית רשמית לקו"ח: ${currentValue}`;
+        if (inputId === 'cv-role') promptText = `${strictRules}\nשפר את הגדרת התפקיד הזו לאנגלית מקצועית בהייטק. תחזיר *רק* גרסה אחת מושלמת (לדוגמה: Frontend Developer): ${currentValue}`;
+        if (inputId === 'cv-summary') promptText = `${strictRules}\nכתוב פסקת Summary עוצמתית אחת ברצף באנגלית לקו"ח (עד 3 משפטים, ללא בולטים) על בסיס זה: ${currentValue}`;
 
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg })
+                body: JSON.stringify({ message: promptText })
             });
-            const data = await response.json();
-            typingDiv.remove();
             
-            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${data.reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div></div>`;
-            addXP(10); 
-        } catch (err) {
-            typingDiv.remove();
-            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">אופס, שגיאה בחיבור לשרת. ודאי שהגדרת מפתח ב-Vercel.</div></div>`;
+            const data = await response.json();
+
+            if (data.reply && !data.reply.includes('🚨')) {
+                // רשת ביטחון: מנקים כוכביות, סולמיות ומרכאות אם קלוד בכל זאת ניסה להתחכם
+                let cleanReply = data.reply.replace(/["*#`]/g, '').trim();
+                
+                inputEl.value = cleanReply;
+                toast('✅ שופר בהצלחה!', 'ok');
+                addXP(10);
+                updatePreview(); // מעדכן את המסמך מיד!
+            } else {
+                toast('❌ שגיאה בשיפור', 'wrn');
+            }
+        } catch (error) {
+            toast('❌ תקלת תקשורת', 'wrn');
         }
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
 
     function quickAsk(he){document.getElementById('chat-inp').value=he;navigate('coach');setTimeout(sendMsg,100);}
