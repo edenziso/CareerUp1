@@ -3,7 +3,7 @@
 פלטפורמה חכמה לניהול חיפוש עבודה לסטודנטים ו-Juniors.
 
 ## 🚀 Demo
-career-up-three.vercel.app
+https://career-jbnqamqgx-edenziso2003-9555s-projects.vercel.app/
 
 
 ##  פיצ'רים
