@@ -109,7 +109,7 @@
         .anim-up{animation:fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) both;}
         .d1{animation-delay:.1s;} .d2{animation-delay:.2s;} .d3{animation-delay:.3s;} .d4{animation-delay:.4s;}
 
-        /* TOGGLE BUTTONS */
+        /* TOGGLE BUTTONS (Lang & Mobile) */
         .lang-toggle{position:fixed;top:24px;left:24px;z-index:500;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px;gap:4px;backdrop-filter:blur(10px);}
         .lang-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .3s;}
         .lang-btn.active{background:var(--p);color:#030816;box-shadow:0 0 15px rgba(0,240,255,0.4);}
@@ -122,17 +122,32 @@
            🖨️ PRINT CSS - FIX FOR PDF EXPORT 🖨️
         ═══════════════════════════════════ */
         @media print {
-            body { background: white !important; overflow: visible !important; }
-            body * { visibility: hidden !important; }
+            @page { size: A4 portrait; margin: 0; }
+            body { background: white !important; overflow: visible !important; margin: 0; padding: 0; }
+            body * { visibility: hidden !important; display: none !important; }
             
-            #cv-printable-area, #cv-printable-area * { visibility: visible !important; }
-            #cv-printable-area { 
-                position: absolute !important; left: 0; top: 0; width: 100%; height: auto;
-                margin: 0 !important; padding: 0 !important; 
-                box-shadow: none !important; border: none !important; background: white !important;
-                max-height: none !important; overflow: visible !important;
+            #cv-printable-area, #cv-printable-area * { 
+                visibility: visible !important; 
+                display: block !important; 
             }
-            .bg-mesh, .bg-dots, .sidebar, .mobile-header, .lang-toggle, .mobile-toggle-btn, #tw { display: none !important; }
+            
+            #cv-printable-area { 
+                position: absolute !important; 
+                left: 0 !important; top: 0 !important; 
+                width: 100vw !important; height: 100vh !important; 
+                margin: 0 !important; padding: 20mm !important; 
+                box-shadow: none !important; border: none !important; 
+                background: white !important; overflow: visible !important; 
+                max-height: none !important;
+            }
+
+            /* Preserve internal flex layouts during print */
+            #cv-printable-area .cv-header, 
+            #cv-printable-area .cv-contacts, 
+            #cv-printable-area .cv-sec, 
+            #cv-printable-area .cv-skills-wrap {
+                display: flex !important;
+            }
         }
         
         /* ═══════════════════════════════════
@@ -1013,6 +1028,19 @@
         if(p==='resume') initCVSkills();
     }
 
+    // --- הפונקציה שהופכת את ה-Markdown של קלוד ל-HTML יפה ---
+    function formatMD(text) {
+        if (!text) return '';
+        return text
+            .replace(/### (.*?)(?=\n|$)/g, '<br><strong style="color:var(--p)">$1</strong>')
+            .replace(/## (.*?)(?=\n|$)/g, '<br><strong style="color:var(--p)">$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n- (.*?)(?=\n|$)/g, '<br>• $1')
+            .replace(/\n/g, '<br>')
+            .replace(/<br><br>/g, '<br>');
+    }
+
     // ═══════════════════════════════════════════════════
     // ONBOARDING FLOW
     // ═══════════════════════════════════════════════════
@@ -1113,7 +1141,7 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // AI CHAT (FIXED: Added Context Injection & Timeout Warning)
+    // AI CHAT - Enhanced with Context and Timeout Handling
     // ═══════════════════════════════════════════════════
     async function sendMsg() {
         const inp = document.getElementById('chat-inp');
@@ -1123,19 +1151,21 @@
         const chatMsgs = document.getElementById('chat-msgs');
         chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
         inp.value = '';
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        
+        // Auto scroll
+        setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
         const typingDiv = document.createElement('div');
         typingDiv.className = 'msg msg-ai';
         typingDiv.innerHTML = `<div class="m-av">🤖</div><div class="m-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
         chatMsgs.appendChild(typingDiv);
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
-        // הזרקת הקשר: ככה ה-AI יודע מי את ויענה הרבה יותר טוב ומדויק
-        const userContext = `(הקשר: אני ${S.profile.name || 'משתמשת'}, עובדת ב-${S.profile.domain || 'הייטק'} עם ניסיון ${S.profile.exp || 'בסיסי'}). השאלה שלי: `;
+        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה
+        const userContext = `(שים לב: המשתמשת שואלת אותך שאלה עכשיו. הקשר עליה: קוראים לה ${S.profile.name || 'עדן'}, היא עובדת בתחום ${S.profile.domain || 'Product'} בהייטק. ענה לה ישירות, באנרגיה טובה, וכתוב בעברית ברורה). השאלה: `;
         const fullMsgToSend = userContext + msg;
 
-        // טיימר חכם למקרה שהשרת חושב הרבה זמן
+        // טיימר חכם - אם הבקשה מתעכבת נודיע למשתמש שזה בטיפול
         const timerId = setTimeout(() => { toast('ה-AI מנתח, זה ייקח עוד כמה שניות...', 'inf', 4000); }, 5000);
 
         try {
@@ -1144,18 +1174,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: fullMsgToSend })
             });
-            clearTimeout(timerId); // מבטל את הטיימר אם ענה מהר
+            clearTimeout(timerId);
             const data = await response.json();
             typingDiv.remove();
             
-            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${data.reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div></div>`;
+            // שימוש בפונקציית העיצוב ל-Markdown שבנינו
+            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${formatMD(data.reply)}</div></div>`;
             addXP(10); 
         } catch (err) {
             clearTimeout(timerId);
             typingDiv.remove();
             chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">אופס, שגיאה בחיבור לשרת. ודאי שהגדרת מפתח ב-Vercel.</div></div>`;
         }
-        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
     }
 
     function quickAsk(he){document.getElementById('chat-inp').value=he;navigate('coach');setTimeout(sendMsg,100);}
@@ -1287,6 +1318,9 @@
             document.getElementById('job-link-input').value = '';
             toast('✅ הנתונים נשאבו בהצלחה!', 'ok');
             addXP(15);
+            
+            // אוטומטית מנתחים את המשרה מיד אחרי שהיא נשאבת מהלינק
+            analyzeMatch();
         }, 1800);
     }
 
@@ -1306,7 +1340,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    cvText: S.profile.skills.join(', ') || `Name: ${S.profile.name}. Role: CSM & Product. Skills: GCP, Agile, UI/UX, Figma.`,
+                    cvText: S.profile.skills.join(', ') || `Name: ${S.profile.name || 'Eden'}. Role: CSM & Product. Skills: GCP, Agile, UI/UX, Figma.`,
                     jobDescription: jobDesc
                 })
             });
@@ -1319,7 +1353,7 @@
             addXP(30);
 
         } catch (error) {
-            // רשת ביטחון במקרה שהשרת לא פעיל או התנתק
+            // רשת ביטחון במקרה שהשרת לא פעיל 
             const mockData = {
                 matchScore: 82,
                 matchTitle: "Product Manager",
@@ -1406,7 +1440,7 @@
     </div>`;
     }
 
-    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה
+    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה!
     async function autoTailorCV() {
         const jobDesc = document.getElementById('job-desc-match')?.value;
         if(!jobDesc) return;
@@ -1429,13 +1463,13 @@
             
             if(data.reply && !data.reply.includes('🚨')) {
                 sumEl.value = data.reply.replace(/["*#`]/g, '').trim();
-                // נשנה גם את התפקיד למשהו שיותר מתאים מהניתוח
+                // נשנה גם את התפקיד למשהו שיותר מתאים מהניתוח שנעשה קודם
                 const newRole = document.getElementById('matched-job-title')?.textContent;
                 if(newRole) roleEl.value = newRole;
                 
-                updatePreview();
-                switchResTab('scratch'); // מחזיר למסך העריכה לראות את הקסם
-                toast('✅ קורות החיים הותאמו למשרה!', 'ok');
+                updatePreview(); // מעדכן את המסמך ויזואלית בצד שמאל
+                switchResTab('scratch'); // מחזיר למסך העריכה כדי שתראה את הקסם קורה
+                toast('✅ קורות החיים שודרגו למשרה!', 'ok');
                 addXP(20);
             }
         } catch(e) {
@@ -1447,9 +1481,9 @@
     // INTERVIEW COACH (Connected to Backend)
     // ═══════════════════════════════════════════════════
     const IV_QS={
-        behavioral:['ספר על פרויקט שאתה גאה בו. מה האתגרים ואיך התגברת?','תארי קונפליקט עם לקוח. איך פתרת?','ספר על כישלון ומה למדת.','מה ההישג הגדול ביותר שלך?','איך מתמודד עם לחץ ועומסי עבודה?'],
-        hr:['למה את מחפשת עבודה עכשיו?','ספרי לי על עצמך','איפה אתה רואה את עצמך עוד 3 שנים?','מה החוזקות והחולשות שלך?','למה את רוצה לעבוד אצלנו?'],
-        technical:['תאר מערכת מורכבת שתכננת או אפיינת מ-Scratch.','איך היית משפרת את ה-Onboarding במוצר שלנו?','מה הגישה שלך לתיעדוף פיצ\'רים (Prioritization)?']
+        behavioral:['ספרי לי על פרויקט שאת גאה בו. מה האתגרים ואיך התגברת?','תארי קונפליקט שהיה לך מול לקוח או בצוות. איך פתרת?','ספרי על משימה שנכשלת בה ומה למדת.','מה ההישג המקצועי הגדול ביותר שלך?','איך את מתמודדת עם לחץ ועומסי עבודה ושינויים בדרישות הלקוח?'],
+        hr:['למה את מחפשת עבודה עכשיו?','ספרי לי קצת על עצמך ועל הניסיון שלך.','איפה את רואה את עצמך עוד 3 שנים?','מה החוזקות והחולשות שלך?','למה את רוצה לעבוד דווקא בחברה שלנו?'],
+        technical:['תארי מערכת מורכבת שאפיינת מ-Scratch.','איך היית משפרת את ה-Onboarding במוצר שלנו?','מה הגישה שלך לתיעדוף פיצ\'רים (Prioritization) מול פיתוח?']
     };
 
     function startInterview(){
@@ -1519,7 +1553,7 @@
         const question = document.getElementById('iv-qtext')?.textContent;
         const role = document.getElementById('iv-role')?.value || 'בהייטק';
 
-        if(!ans){toast('⚠️ כתוב תשובה','wrn');return;}
+        if(!ans){toast('⚠️ כתבי תשובה','wrn');return;}
         const btn=document.getElementById('iv-submit-btn');
         btn.innerHTML='<div class="spin" style="border-top-color:#030816"></div>';btn.disabled=true;
 
@@ -1546,7 +1580,7 @@
                     <div style="font-size:14px;color:var(--muted);font-weight:600">מתוך 100</div>
                 </div>
                 <div style="font-size:14px;line-height:1.7;color:var(--text)">
-                    ${replyText.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+                    ${formatMD(replyText.replace(/ציון:\s*\d+/g, ''))}
                 </div>
                 <button class="btn btn-p btn-full" style="margin-top:16px" onclick="ivNextQ()">שאלה הבאה →</button>`;
             
