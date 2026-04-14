@@ -6,6 +6,9 @@
     <title>CareerUp | מסלול הצמיחה שלך</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         /* ═══════════════════════════════════
            DESIGN TOKENS (Cyber/Tech Glass)
@@ -109,7 +112,7 @@
         .anim-up{animation:fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) both;}
         .d1{animation-delay:.1s;} .d2{animation-delay:.2s;} .d3{animation-delay:.3s;} .d4{animation-delay:.4s;}
 
-        /* TOGGLE BUTTONS (Lang & Mobile) */
+        /* TOGGLE BUTTONS */
         .lang-toggle{position:fixed;top:24px;left:24px;z-index:500;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px;gap:4px;backdrop-filter:blur(10px);}
         .lang-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .3s;}
         .lang-btn.active{background:var(--p);color:#030816;box-shadow:0 0 15px rgba(0,240,255,0.4);}
@@ -117,38 +120,6 @@
         .mobile-toggle-btn{position:fixed;bottom:24px;left:24px;z-index:500;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .3s ease;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,0.3);}
         .mobile-toggle-btn:hover{border-color:var(--p);box-shadow:0 0 15px rgba(0,240,255,0.3);transform:translateY(-2px);}
         body.mobile-view .mobile-toggle-btn { bottom: 94px; }
-
-        /* ═══════════════════════════════════
-           🖨️ PRINT CSS - FIX FOR PDF EXPORT 🖨️
-        ═══════════════════════════════════ */
-        @media print {
-            @page { size: A4 portrait; margin: 0; }
-            body { background: white !important; overflow: visible !important; margin: 0; padding: 0; }
-            body * { visibility: hidden !important; display: none !important; }
-            
-            #cv-printable-area, #cv-printable-area * { 
-                visibility: visible !important; 
-                display: block !important; 
-            }
-            
-            #cv-printable-area { 
-                position: absolute !important; 
-                left: 0 !important; top: 0 !important; 
-                width: 100vw !important; height: 100vh !important; 
-                margin: 0 !important; padding: 20mm !important; 
-                box-shadow: none !important; border: none !important; 
-                background: white !important; overflow: visible !important; 
-                max-height: none !important;
-            }
-
-            /* Preserve internal flex layouts during print */
-            #cv-printable-area .cv-header, 
-            #cv-printable-area .cv-contacts, 
-            #cv-printable-area .cv-sec, 
-            #cv-printable-area .cv-skills-wrap {
-                display: flex !important;
-            }
-        }
         
         /* ═══════════════════════════════════
            AUTH & ONBOARDING
@@ -700,7 +671,7 @@
                                 </div>
                                 <div class="fs-body">
                                     <div class="field-row col2">
-                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="שם מלא" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Eden Ziso" oninput="updatePreview()"></div>
                                         <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Frontend Developer" oninput="updatePreview()"></div>
                                     </div>
                                     <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate developer..." oninput="updatePreview()"></textarea></div>
@@ -771,11 +742,9 @@
                 <div class="g2" style="align-items:start">
                     <div style="display:flex;flex-direction:column;gap:16px">
                         <div class="card">
-                            <div class="label">הזן קישור למשרה או טקסט חופשי</div>
-                            <div class="smart-input-wrap">
-                                <input class="inp" id="job-link-input" placeholder="🔗 הדבק לינק (LinkedIn, אתר חברה...)">
-                                <button class="btn btn-p smart-btn" id="fetch-btn" onclick="simulateFetchJob()">משוך נתונים ✨</button>
-                            </div>
+                            <div class="label">הדבק את תיאור המשרה (Job Description)</div>
+                            <div style="font-size:13px;color:var(--pl);margin-bottom:14px;line-height:1.6">הדבק את הטקסט המלא של המשרה מלינקדאין או מאתר החברה, וה-AI ינתח את ההתאמה שלך ויציע קורסים ושכתוב.</div>
+
                             <textarea class="inp" id="job-desc-match" rows="6" placeholder="הדבק כאן תיאור משרה מלא..."></textarea>
                             <button class="btn btn-p btn-full" style="margin-top:16px" onclick="analyzeMatch()">🔍 נתח התאמה ומסלול צמיחה</button>
                         </div>
@@ -1141,7 +1110,7 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // AI CHAT - Enhanced with Context and Timeout Handling
+    // AI CHAT - Enhanced with Context and Timeout Warning
     // ═══════════════════════════════════════════════════
     async function sendMsg() {
         const inp = document.getElementById('chat-inp');
@@ -1161,8 +1130,8 @@
         chatMsgs.appendChild(typingDiv);
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
-        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה
-        const userContext = `(שים לב: המשתמשת שואלת אותך שאלה עכשיו. הקשר עליה: קוראים לה ${S.profile.name || 'עדן'}, היא עובדת בתחום ${S.profile.domain || 'Product'} בהייטק. ענה לה ישירות, באנרגיה טובה, וכתוב בעברית ברורה). השאלה: `;
+        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה ויימנע מחפירות מיותרות
+        const userContext = `(שים לב: המשתמשת שואלת אותך שאלה עכשיו. הקשר עליה: קוראים לה ${S.profile.name || 'עדן'}, היא עובדת בתפקיד ניהול מוצר (Product) ו-CSM במגזר הביטחוני. ענה לה ישירות, קצר ולעניין, באנרגיה טובה, מקסימום 2 פסקאות). השאלה: `;
         const fullMsgToSend = userContext + msg;
 
         // טיימר חכם - אם הבקשה מתעכבת נודיע למשתמש שזה בטיפול
@@ -1244,7 +1213,7 @@
         toast(`מכין קובץ ${type.toUpperCase()} להורדה...`, 'inf');
         setTimeout(() => {
             if(type === 'pdf') {
-                toast('✅ פותח חלונית הדפסה...', 'ok');
+                toast('✅ פותח חלונית הדפסה לקובץ...', 'ok');
                 window.print(); // מפעיל את ה-CSS המיוחד שהוספנו להדפסה נקייה
             } else {
                 toast('✅ הקובץ מוכן! (הדגמה)', 'ok');
@@ -1302,32 +1271,10 @@
     // ═══════════════════════════════════════════════════
     // JOB MATCHING & AUTO-TAILOR
     // ═══════════════════════════════════════════════════
-    function simulateFetchJob() {
-        const link = document.getElementById('job-link-input').value;
-        if(!link) { toast('⚠️ אנא הדבק לינק קודם', 'wrn'); return; }
-
-        const btn = document.getElementById('fetch-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<div class="spin" style="width:16px;height:16px;border-width:2px;border-top-color:#030816"></div>';
-
-        toast('🤖 ה-AI סורק את המשרה מהלינק...', 'inf');
-
-        setTimeout(() => {
-            document.getElementById('job-desc-match').value = "【נשאב אוטומטית מהלינק】\nדרוש/ה Product Manager / Cloud Solutions. דרישות:\n• ניסיון מעשי בעבודה עם סביבות ענן (GCP / AWS)\n• היכרות עם מתודולוגיות Agile ועבודה עם Jira\n• הבנה מצוינת ב-UX/UI ויכולת עבודה מול מעצבים (Figma)\n• יכולת למידה עצמית וניהול תהליכי לקוח (CSM).";
-            btn.innerHTML = originalText;
-            document.getElementById('job-link-input').value = '';
-            toast('✅ הנתונים נשאבו בהצלחה!', 'ok');
-            addXP(15);
-            
-            // אוטומטית מנתחים את המשרה מיד אחרי שהיא נשאבת מהלינק
-            analyzeMatch();
-        }, 1800);
-    }
-
     async function analyzeMatch() {
         const jobDesc = document.getElementById('job-desc-match')?.value?.trim();
         if (!jobDesc || jobDesc.length < 20) {
-            toast('⚠️ הדבק תיאור משרה מלא או משוך מלינק', 'wrn');
+            toast('⚠️ הדבק תיאור משרה מלא אל תוך התיבה', 'wrn');
             return;
         }
 
@@ -1353,7 +1300,7 @@
             addXP(30);
 
         } catch (error) {
-            // רשת ביטחון במקרה שהשרת לא פעיל 
+            // רשת ביטחון במקרה שהשרת לא פעיל או חסר קובץ - יציג הדגמה יפה
             const mockData = {
                 matchScore: 82,
                 matchTitle: "Product Manager",
@@ -1440,7 +1387,7 @@
     </div>`;
     }
 
-    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה!
+    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה
     async function autoTailorCV() {
         const jobDesc = document.getElementById('job-desc-match')?.value;
         if(!jobDesc) return;
@@ -1463,13 +1410,14 @@
             
             if(data.reply && !data.reply.includes('🚨')) {
                 sumEl.value = data.reply.replace(/["*#`]/g, '').trim();
-                // נשנה גם את התפקיד למשהו שיותר מתאים מהניתוח שנעשה קודם
+                
+                // משנה את התפקיד לזה שנמצא בניתוח המשרה
                 const newRole = document.getElementById('matched-job-title')?.textContent;
                 if(newRole) roleEl.value = newRole;
                 
-                updatePreview(); // מעדכן את המסמך ויזואלית בצד שמאל
-                switchResTab('scratch'); // מחזיר למסך העריכה כדי שתראה את הקסם קורה
-                toast('✅ קורות החיים שודרגו למשרה!', 'ok');
+                updatePreview(); 
+                switchResTab('scratch'); // מחזיר למסך העריכה לראות את הקסם
+                toast('✅ קורות החיים שודרגו והותאמו למשרה!', 'ok');
                 addXP(20);
             }
         } catch(e) {
