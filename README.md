@@ -3,8 +3,8 @@
 פלטפורמה חכמה לניהול חיפוש עבודה לסטודנטים ו-Juniors.
 
 ## 🚀 Demo
-https://careerup1.netlify.app
-https://careerup1.onrender.com/
+career-up-three.vercel.app
+
 
 ##  פיצ'רים
 מאמן קריירה AI (Claude API)
