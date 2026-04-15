@@ -122,6 +122,38 @@
         body.mobile-view .mobile-toggle-btn { bottom: 94px; }
         
         /* ═══════════════════════════════════
+           🖨️ PRINT CSS - FIX FOR PDF EXPORT 🖨️
+        ═══════════════════════════════════ */
+        @media print {
+            @page { size: A4 portrait; margin: 0; }
+            body { background: white !important; overflow: visible !important; margin: 0; padding: 0; }
+            body * { visibility: hidden !important; display: none !important; }
+            
+            #cv-printable-area, #cv-printable-area * { 
+                visibility: visible !important; 
+                display: block !important; 
+            }
+            
+            #cv-printable-area { 
+                position: absolute !important; 
+                left: 0 !important; top: 0 !important; 
+                width: 100vw !important; height: 100vh !important; 
+                margin: 0 !important; padding: 20mm !important; 
+                box-shadow: none !important; border: none !important; 
+                background: white !important; overflow: visible !important; 
+                max-height: none !important;
+            }
+
+            /* Preserve internal flex layouts during print */
+            #cv-printable-area .cv-header, 
+            #cv-printable-area .cv-contacts, 
+            #cv-printable-area .cv-sec, 
+            #cv-printable-area .cv-skills-wrap {
+                display: flex !important;
+            }
+        }
+        
+        /* ═══════════════════════════════════
            AUTH & ONBOARDING
         ═══════════════════════════════════ */
         #screen-auth{align-items:center;justify-content:center;padding:40px;}
@@ -592,7 +624,7 @@
                     <div class="ph-title" id="res-title">📄 בונה קו"ח</div>
                     <div class="ph-sub" id="res-sub">כתוב מאפס, העלה קיים, או התאם למשרה</div>
                 </div>
-                <button class="btn btn-p" onclick="exportRealPDF()">⬇️ ייצוא ל-PDF</button>
+                <button class="btn btn-p" onclick="exportFile('pdf')">⬇️ ייצוא ל-PDF</button>
             </div>
 
             <div class="main-tabs">
@@ -671,10 +703,10 @@
                                 </div>
                                 <div class="fs-body">
                                     <div class="field-row col2">
-                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Eden Ziso" oninput="updatePreview()"></div>
-                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Product Manager" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Israel Israeli" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Frontend Developer" oninput="updatePreview()"></div>
                                     </div>
-                                    <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate professional..." oninput="updatePreview()"></textarea></div>
+                                    <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate developer..." oninput="updatePreview()"></textarea></div>
                                 </div>
                             </div>
                             <div style="display:flex;gap:12px">
@@ -717,11 +749,11 @@
                         <div>
                             <div class="label">ייצוא קובץ אמיתי למחשב</div>
                             <div class="export-opts" style="margin-bottom:20px; display:flex; gap:16px;">
-                                <div class="card" onclick="exportRealPDF()" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
+                                <div class="card" onclick="exportFile('pdf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
                                     <div style="font-size:32px;margin-bottom:10px">📄</div><div style="font-size:14px;font-weight:700;color:var(--text)">הורד PDF</div>
                                 </div>
                                 <div class="card" onclick="toast('ייצוא לוורד יפתח בקרוב', 'inf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s; opacity:0.5">
-                                    <div style="font-size:32px;margin-bottom:10px">📝</div><div style="font-size:14px;font-weight:700;color:var(--text)">Word</div>
+                                    <div style="font-size:32px;margin-bottom:10px">📝</div><div style="font-size:14px;font-weight:700;color:var(--text)">Word (.docx)</div>
                                 </div>
                             </div>
                         </div>
@@ -743,7 +775,7 @@
                     <div style="display:flex;flex-direction:column;gap:16px">
                         <div class="card">
                             <div class="label">הדבק את תיאור המשרה (Job Description) מלינקדאין</div>
-                            <div style="font-size:13px;color:var(--pl);margin-bottom:14px;line-height:1.6">הדבק כאן את הטקסט המלא של המשרה שאת מעוניינת בה, וה-AI ינתח את ההתאמה שלך, יציע קורסים וישכתב לך את הקו"ח.</div>
+                            <div style="font-size:13px;color:var(--pl);margin-bottom:14px;line-height:1.6">הדבק כאן את הטקסט המלא של המשרה שאת/ה מעוניין/ת בה, וה-AI ינתח את ההתאמה שלך, יציע קורסים וישכתב לך את הקו"ח.</div>
                             
                             <textarea class="inp" id="job-desc-match" rows="8" placeholder="דוגמה: Looking for a Product Manager with 2+ years of experience in SaaS..."></textarea>
                             <button class="btn btn-p btn-full" style="margin-top:16px" onclick="analyzeMatch()">🔍 נתח התאמה למשרה זו</button>
@@ -836,7 +868,7 @@
                         </div>
                         <div style="margin-bottom:16px">
                             <label style="font-size:12px;font-weight:700;color:var(--pl);display:block;margin-bottom:6px">תפקיד</label>
-                            <input class="inp" id="iv-role" placeholder="Product Manager">
+                            <input class="inp" id="iv-role" placeholder="Frontend Developer">
                         </div>
                     </div>
 
@@ -997,6 +1029,7 @@
         if(p==='resume') initCVSkills();
     }
 
+    // הפונקציה שהופכת את ה-Markdown של קלוד ל-HTML יפה
     function formatMD(text) {
         if (!text) return '';
         return text
@@ -1020,12 +1053,12 @@
             c.innerHTML=`
       <div class="ob-q">מה שמך? 👋</div>
       <div class="ob-sub">נתאים לך את כל האפליקציה אישית</div>
-      <input class="name-input" id="ob-name" placeholder="הכנס שם מלא..." value="${S.profile.name}" oninput="S.profile.name=this.value">
+      <input class="name-input" id="ob-name" placeholder="שם מלא..." value="${S.profile.name || ''}" oninput="S.profile.name=this.value">
       <div class="ob-nav"><div></div><button class="btn btn-p btn-lg" onclick="obNext()">הבא →</button></div>`;
             setTimeout(()=>document.getElementById('ob-name')?.focus(),100);
         } else if(S.obStep===2){
             c.innerHTML=`
-      <div class="ob-q">באיזה תחום את מחפשת?</div>
+      <div class="ob-q">באיזה תחום את/ה מחפש/ת?</div>
       <div class="domain-grid">${DOMAINS.map(d=>`
         <div class="domain-card${S.profile.domain===d.key?' selected':''}" onclick="selDomain('${d.key}',this)">
           <div class="dc-icon">${d.icon}</div><div class="dc-name">${d.name}</div>
@@ -1066,9 +1099,9 @@
             c.innerHTML=`
       <div class="ob-finish">
         <span class="ob-finish-icon">✅</span>
-        <div class="ob-finish-title">הפרופיל שלך מוכן, ${S.profile.name}!</div>
-        <div class="ob-finish-sub">CareerUp יתאים לך את כל הכלים לפי המידע שמסרת</div>
-        <button class="btn btn-p btn-lg" onclick="launchApp()">🚀 בואו נתחיל</button>
+        <div class="ob-finish-title">הפרופיל שלך מוכן, ${S.profile.name || 'משתמש'}!</div>
+        <div class="ob-finish-sub">CareerUp תתאים לך את כל הכלים לפי המידע שמסרת</div>
+        <button class="btn btn-p btn-lg" onclick="launchApp()">🚀 בוא/י נתחיל</button>
       </div>`;
         }
     }
@@ -1087,13 +1120,13 @@
     function launchApp(){
         showScreen('screen-app');
         const d = S.profile;
-        const initials = d.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2) || '?';
+        const initials = d.name.trim() ? d.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2) : '?';
         const domainName = DOMAINS.find(x=>x.key===d.domain)?.name || '—';
         
         document.getElementById('sb-av').textContent = initials;
-        document.getElementById('sb-name').textContent = d.name || '—';
+        document.getElementById('sb-name').textContent = d.name || 'משתמש/ת';
         document.getElementById('sb-role').textContent = domainName;
-        document.getElementById('dash-hi').innerHTML = `שלום ${d.name}! 👋`;
+        document.getElementById('dash-hi').innerHTML = `שלום ${d.name || 'שוב'}! 👋`;
 
         const pName = document.getElementById('p-name'); if(pName) pName.textContent = d.name || '—';
         const pDomain = document.getElementById('p-domain'); if(pDomain) pDomain.textContent = domainName;
@@ -1104,12 +1137,12 @@
         document.querySelectorAll('.streak-val').forEach(el => el.textContent = S.streak);
 
         initCVSkills();
-        toast('ברוכה הבאה ל-CareerUp 🎉','ok');
+        toast('ברוכים הבאים ל-CareerUp 🎉','ok');
         setTimeout(() => addXP(50), 1000); 
     }
 
     // ═══════════════════════════════════════════════════
-    // AI CHAT - Enhanced with Context and Timeout Warning
+    // AI CHAT - המוח שופר להיות מהיר ולעניין
     // ═══════════════════════════════════════════════════
     async function sendMsg() {
         const inp = document.getElementById('chat-inp');
@@ -1119,6 +1152,7 @@
         const chatMsgs = document.getElementById('chat-msgs');
         chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
         inp.value = '';
+        
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
         const typingDiv = document.createElement('div');
@@ -1127,12 +1161,12 @@
         chatMsgs.appendChild(typingDiv);
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
-        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה, פלוס הגבלת אורך
-        const userContext = `הקשר: המשתמשת שואלת אותך שאלה עכשיו. קוראים לה ${S.profile.name || 'עדן'}, עובדת בתפקיד ${S.profile.domain || 'Product'} בהייטק. חוק חשוב: ענה ישירות, לעניין, באנרגיה טובה, מקסימום ב-2 פסקאות קצרות. השאלה שלה היא: `;
+        // הזרקת הקשר חכמה ויעילה. מונע ממנו "להזות" דברים
+        const userContext = S.profile.domain ? `(רקע: אני מתעניין/ת בתחום ה-${S.profile.domain}. ענה לשאלתי הבאה בקצרה, עד 3 משפטים בעברית): ` : `(ענה לשאלתי הבאה בקצרה, עד 3 משפטים בעברית): `;
         const fullMsgToSend = userContext + msg;
 
-        // טיימר חכם למניעת תחושת איטיות
-        const timerId = setTimeout(() => { toast('ה-AI מנתח, זה ייקח עוד כמה שניות...', 'inf', 4000); }, 5000);
+        // טיימר חכם
+        const timerId = setTimeout(() => { toast('ה-AI חושב על תשובה איכותית...', 'inf', 4000); }, 5000);
 
         try {
             const response = await fetch('/api/chat', {
@@ -1221,7 +1255,7 @@
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // מפעילים את ההורדה
+        // מפעילים את ההורדה האוטומטית
         setTimeout(() => {
             html2pdf().set(opt).from(element).save().then(() => {
                 toast('✅ הקובץ נשמר בהצלחה במחשב!', 'ok');
@@ -1277,13 +1311,13 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // JOB MATCHING & AUTO-TAILOR (FIXED: Real Parsing)
+    // JOB MATCHING & AUTO-TAILOR 
     // ═══════════════════════════════════════════════════
     
     async function analyzeMatch() {
         const jobDesc = document.getElementById('job-desc-match')?.value?.trim();
         if (!jobDesc || jobDesc.length < 20) {
-            toast('⚠️ אנא הדביקי את טקסט המשרה במלואו', 'wrn');
+            toast('⚠️ אנא הדביקי את טקסט המשרה במלואו לתוך התיבה', 'wrn');
             return;
         }
 
@@ -1296,7 +1330,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    cvText: `Name: ${S.profile.name || 'Eden'}. Role: CSM & Product. Skills: GCP, Agile, UI/UX, Figma.`,
+                    cvText: `Name: ${S.profile.name || 'User'}. Role: Tech Professional. Skills: ${S.profile.skills.join(', ')}.`,
                     jobDescription: jobDesc
                 })
             });
@@ -1309,15 +1343,15 @@
             addXP(30);
 
         } catch (error) {
-            // רשת ביטחון במקרה שהשרת לא פעיל או התנתק
+            // רשת ביטחון במקרה שהשרת לא פעיל או חסר קובץ API
             const mockData = {
                 matchScore: 82,
-                matchTitle: "Product Manager",
+                matchTitle: "Product Manager / Tech Lead",
                 matchSub: "ניתוח התאמה מבוסס פרופיל",
                 skills: [
                     { name: "Agile/Scrum", myLevel: 60, required: 80 },
                     { name: "UX/UI", myLevel: 90, required: 70 },
-                    { name: "Cloud (GCP)", myLevel: 85, required: 90 }
+                    { name: "Cloud Base", myLevel: 85, required: 90 }
                 ],
                 gaps: [
                     {
@@ -1396,7 +1430,7 @@
     </div>`;
     }
 
-    // הפונקציה לשכתוב אוטומטי של קורות חיים לפי משרה
+    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה
     async function autoTailorCV() {
         const jobDesc = document.getElementById('job-desc-match')?.value;
         if(!jobDesc) return;
@@ -1435,12 +1469,12 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // INTERVIEW COACH
+    // INTERVIEW COACH (Connected to Backend)
     // ═══════════════════════════════════════════════════
     const IV_QS={
-        behavioral:['ספרי לי על פרויקט שאת גאה בו. מה האתגרים ואיך התגברת?','תארי קונפליקט שהיה לך מול לקוח או בצוות. איך פתרת?','ספרי על משימה שנכשלת בה ומה למדת.','מה ההישג המקצועי הגדול ביותר שלך?','איך את מתמודדת עם לחץ ועומסי עבודה ושינויים בדרישות הלקוח?'],
-        hr:['למה את מחפשת עבודה עכשיו?','ספרי לי קצת על עצמך ועל הניסיון שלך.','איפה את רואה את עצמך עוד 3 שנים?','מה החוזקות והחולשות שלך?','למה את רוצה לעבוד דווקא בחברה שלנו?'],
-        technical:['תארי מערכת מורכבת שאפיינת מ-Scratch.','איך היית משפרת את ה-Onboarding במוצר שלנו?','מה הגישה שלך לתיעדוף פיצ\'רים (Prioritization) מול פיתוח?']
+        behavioral:['ספר/י לי על פרויקט שאת/ה גאה בו. מה האתגרים ואיך התגברת?','תאר/י קונפליקט שהיה לך מול לקוח או בצוות. איך פתרת?','ספר/י על משימה שנכשלת בה ומה למדת.','מה ההישג המקצועי הגדול ביותר שלך?','איך את/ה מתמודד/ת עם לחץ ועומסי עבודה ושינויים בדרישות הלקוח?'],
+        hr:['למה את/ה מחפש/ת עבודה עכשיו?','ספר/י לי קצת על עצמך ועל הניסיון שלך.','איפה את/ה רואה את עצמך עוד 3 שנים?','מה החוזקות והחולשות שלך?','למה את/ה רוצה לעבוד דווקא בחברה שלנו?'],
+        technical:['תאר/י מערכת מורכבת שאפיינת מ-Scratch.','איך היית משפר/ת את ה-Onboarding במוצר שלנו?','מה הגישה שלך לתיעדוף פיצ\'רים (Prioritization) מול פיתוח?']
     };
 
     function startInterview(){
@@ -1510,7 +1544,7 @@
         const question = document.getElementById('iv-qtext')?.textContent;
         const role = document.getElementById('iv-role')?.value || 'בהייטק';
 
-        if(!ans){toast('⚠️ כתבי תשובה','wrn');return;}
+        if(!ans){toast('⚠️ כתוב/י תשובה','wrn');return;}
         const btn=document.getElementById('iv-submit-btn');
         btn.innerHTML='<div class="spin" style="border-top-color:#030816"></div>';btn.disabled=true;
 
