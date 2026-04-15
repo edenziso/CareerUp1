@@ -11,7 +11,7 @@
 
     <style>
         /* ═══════════════════════════════════
-           DESIGN TOKENS (Cyber/Tech Glass)
+           DESIGN TOKENS
         ═══════════════════════════════════ */
         :root {
             --bg: #030816;
@@ -40,7 +40,6 @@
         .sb-logo .logo-img { width: 32px; height: 32px; object-fit: contain; }
         .mobile-header .logo-img { width: 28px; height: 28px; object-fit: contain; }
 
-        /* BG - Glowing Cyber Mesh */
         .bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;
             background:radial-gradient(ellipse 60% 50% at 80% 10%,rgba(0,240,255,.07) 0%,transparent 60%),
             radial-gradient(ellipse 40% 40% at 10% 80%,rgba(59,130,246,.08) 0%,transparent 60%),
@@ -49,7 +48,6 @@
             background-image:radial-gradient(circle,rgba(0,240,255,.1) 1px,transparent 1px);
             background-size:40px 40px;}
 
-        /* ═══ COMMON (GLASSMORPHISM) ═══ */
         .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:24px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
         .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;}
 
@@ -91,7 +89,6 @@
         .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
         .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
 
-        /* TOAST */
         #tw{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;align-items:center; pointer-events: none;}
         .toast{background:rgba(15,23,42,0.95);border:1px solid var(--border);border-radius:14px;padding:12px 24px;font-size:13px;font-weight:600;animation:tIn .4s cubic-bezier(0.4, 0, 0.2, 1);white-space:nowrap;backdrop-filter:blur(10px);box-shadow:0 15px 35px rgba(0,0,0,0.5);}
         .toast.ok{border-color:rgba(16,185,129,.5);color:var(--p3);box-shadow:0 5px 20px rgba(16,185,129,.15);}
@@ -100,11 +97,9 @@
         @keyframes tIn{from{opacity:0;transform:translateY(20px) scale(0.9);}to{opacity:1;transform:translateY(0) scale(1);}}
         @keyframes tOut{from{opacity:1;transform:scale(1);}to{opacity:0;transform:translateY(10px) scale(0.95);}}
 
-        /* SCREENS */
         .screen{display:none;min-height:100vh;position:relative;z-index:1;}
         .screen.active{display:flex;flex-direction:column;}
 
-        /* ANIMS */
         @keyframes fadeUp{from{opacity:0;transform:translateY(25px);}to{opacity:1;transform:translateY(0);}}
         @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.05);opacity:.8;}}
         @keyframes wave{0%,100%{transform:scaleY(.4);}50%{transform:scaleY(1);}}
@@ -112,7 +107,6 @@
         .anim-up{animation:fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) both;}
         .d1{animation-delay:.1s;} .d2{animation-delay:.2s;} .d3{animation-delay:.3s;} .d4{animation-delay:.4s;}
 
-        /* TOGGLE BUTTONS (Lang & Mobile) */
         .lang-toggle{position:fixed;top:24px;left:24px;z-index:500;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px;gap:4px;backdrop-filter:blur(10px);}
         .lang-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .3s;}
         .lang-btn.active{background:var(--p);color:#030816;box-shadow:0 0 15px rgba(0,240,255,0.4);}
@@ -121,9 +115,7 @@
         .mobile-toggle-btn:hover{border-color:var(--p);box-shadow:0 0 15px rgba(0,240,255,0.3);transform:translateY(-2px);}
         body.mobile-view .mobile-toggle-btn { bottom: 94px; }
         
-        /* ═══════════════════════════════════
-           🖨️ PRINT CSS - FIX FOR PDF EXPORT 🖨️
-        ═══════════════════════════════════ */
+        /* 🖨️ PRINT CSS */
         @media print {
             @page { size: A4 portrait; margin: 0; }
             body { background: white !important; overflow: visible !important; margin: 0; padding: 0; }
@@ -144,7 +136,6 @@
                 max-height: none !important;
             }
 
-            /* Preserve internal flex layouts during print */
             #cv-printable-area .cv-header, 
             #cv-printable-area .cv-contacts, 
             #cv-printable-area .cv-sec, 
@@ -153,9 +144,7 @@
             }
         }
         
-        /* ═══════════════════════════════════
-           AUTH & ONBOARDING
-        ═══════════════════════════════════ */
+        /* AUTH & ONBOARDING */
         #screen-auth{align-items:center;justify-content:center;padding:40px;}
         .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:50px;width:460px;max-width:100%;backdrop-filter:blur(20px);box-shadow:0 25px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);}
         .auth-logo{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:36px;}
@@ -236,9 +225,7 @@
         .ob-finish-title{font-family:'Outfit',sans-serif;font-size:36px;font-weight:900;letter-spacing:-1px;margin-bottom:12px;color:var(--p);}
         .ob-finish-sub{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:40px;}
 
-        /* ═══════════════════════════════════
-           APP SHELL & HUD
-        ═══════════════════════════════════ */
+        /* APP SHELL & HUD */
         #screen-app{display:none!important;}
         #screen-app.active{display:flex!important;flex-direction:row!important;}
 
@@ -471,7 +458,7 @@
         <button class="btn btn-p btn-lg btn-full" style="margin-top:10px" onclick="goToOb()">
             <span id="at-register">הרשמה →</span>
         </button>
-        <div class="auth-switch" id="at-switch">כבר רשום? <a onclick="goToOb()">כניסה</a></div>
+        <div class="auth-switch" id="at-switch">כבר רשום? <a onclick="doLogin()">כניסה לחשבון</a></div>
     </div>
 </div>
 
@@ -624,7 +611,7 @@
                     <div class="ph-title" id="res-title">📄 בונה קו"ח</div>
                     <div class="ph-sub" id="res-sub">כתוב מאפס, העלה קיים, או התאם למשרה</div>
                 </div>
-                <button class="btn btn-p" onclick="exportFile('pdf')">⬇️ ייצוא ל-PDF</button>
+                <button class="btn btn-p" onclick="exportRealPDF()">⬇️ ייצוא ל-PDF</button>
             </div>
 
             <div class="main-tabs">
@@ -684,9 +671,6 @@
                             <div style="font-size:12px; color:var(--muted);">משרות ספציפיות</div>
                         </div>
                     </div>
-                    <div style="padding:16px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:var(--rm);margin-bottom:28px;font-size:14px;line-height:1.7;color:var(--text);box-shadow:inset 0 0 10px rgba(16,185,129,0.05)">
-                        💡 <strong style="color:var(--p3)">טיפ:</strong> 95% ממשרות ההייטק בישראל מצפות לקו"ח באנגלית. גם אם החברה ישראלית, קו"ח באנגלית מראה על מקצועיות.
-                    </div>
                     <div style="display:flex;gap:12px">
                         <button class="btn btn-ghost" onclick="goWiz(1)">← חזרה</button>
                         <button class="btn btn-p btn-lg" onclick="goWiz(3)">הבא – מילוי תוכן →</button>
@@ -703,8 +687,8 @@
                                 </div>
                                 <div class="fs-body">
                                     <div class="field-row col2">
-                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Israel Israeli" oninput="updatePreview()"></div>
-                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Frontend Developer" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="User Name" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Tech Professional" oninput="updatePreview()"></div>
                                     </div>
                                     <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate developer..." oninput="updatePreview()"></textarea></div>
                                 </div>
@@ -749,7 +733,7 @@
                         <div>
                             <div class="label">ייצוא קובץ אמיתי למחשב</div>
                             <div class="export-opts" style="margin-bottom:20px; display:flex; gap:16px;">
-                                <div class="card" onclick="exportFile('pdf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
+                                <div class="card" onclick="exportRealPDF()" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
                                     <div style="font-size:32px;margin-bottom:10px">📄</div><div style="font-size:14px;font-weight:700;color:var(--text)">הורד PDF</div>
                                 </div>
                                 <div class="card" onclick="toast('ייצוא לוורד יפתח בקרוב', 'inf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s; opacity:0.5">
@@ -868,7 +852,7 @@
                         </div>
                         <div style="margin-bottom:16px">
                             <label style="font-size:12px;font-weight:700;color:var(--pl);display:block;margin-bottom:6px">תפקיד</label>
-                            <input class="inp" id="iv-role" placeholder="Frontend Developer">
+                            <input class="inp" id="iv-role" placeholder="Tech Professional">
                         </div>
                     </div>
 
@@ -934,8 +918,10 @@
 
 <script>
     // ═══════════════════════════════════════════════════
-    // STATE & DATA
+    // API CONFIGURATION & STATE
     // ═══════════════════════════════════════════════════
+    let authToken = localStorage.getItem('careerup_token') || null;
+
     const S = {
         lang:'he',
         profile:{ name:'', domain:'', skills:[], strengths:[], exp:'', jobTypes:[] },
@@ -944,6 +930,26 @@
         wizStep:1, tpl:'classic', cvLang:'en',
         xp: 120, streak: 3
     };
+
+    // פונקציית העזר ששולחת את הטוקן לשרת בכל בקשה
+    async function apiCall(endpoint, method = 'GET', body = null) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) {
+            headers['Authorization'] = `Bearer ${authToken}`;
+        }
+        
+        const options = { method, headers };
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+        
+        const res = await fetch(endpoint, options);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'שגיאת רשת מול השרת');
+        }
+        return res.json();
+    }
 
     const DOMAINS=[
         {icon:'🎨',name:'Frontend',sub:'React, HTML, CSS',key:'frontend'},
@@ -984,9 +990,6 @@
         {e:'📅',n:'גמיש',k:'flex'},{e:'🏠',n:'Remote',k:'remote'},{e:'🔀',n:'Hybrid',k:'hybrid'},
     ];
 
-    // ═══════════════════════════════════════════════════
-    // HELPERS & UI
-    // ═══════════════════════════════════════════════════
     function toast(msg,type='inf',ms=3000){
         const c=document.getElementById('tw');
         const el=document.createElement('div');
@@ -997,7 +1000,6 @@
     function addXP(amount) {
         S.xp += amount;
         document.querySelectorAll('.xp-val').forEach(el => el.textContent = S.xp);
-        toast(`💎 +${amount} XP! עבודה מעולה`, 'ok');
     }
 
     function setLang(lang, btn) {
@@ -1029,7 +1031,6 @@
         if(p==='resume') initCVSkills();
     }
 
-    // הפונקציה שהופכת את ה-Markdown של קלוד ל-HTML יפה
     function formatMD(text) {
         if (!text) return '';
         return text
@@ -1040,6 +1041,75 @@
             .replace(/\n- (.*?)(?=\n|$)/g, '<br>• $1')
             .replace(/\n/g, '<br>')
             .replace(/<br><br>/g, '<br>');
+    }
+
+    // ═══════════════════════════════════════════════════
+    // AUTHENTICATION (NEW! Connected to Supabase)
+    // ═══════════════════════════════════════════════════
+    async function doLogin() {
+        const email = document.getElementById('at-email').value;
+        const password = document.getElementById('at-pass').value;
+        if(!email || !password) { toast('אנא הזן אימייל וסיסמה', 'wrn'); return; }
+        
+        try {
+            const res = await apiCall('/api/auth/login', 'POST', { email, password });
+            
+            // שומרים את הטוקן להמשך הדרך
+            authToken = res.accessToken;
+            localStorage.setItem('careerup_token', authToken);
+            
+            // מעדכנים את נתוני הפרופיל מהענן
+            S.profile.name = res.user.full_name || '';
+            S.xp = res.user.xp || 0;
+            S.streak = res.user.streak || 1;
+            
+            launchApp();
+        } catch(e) {
+            toast(e.message, 'wrn');
+        }
+    }
+
+    async function obFinish() {
+        if(!S.profile.exp){toast('בחר רמת ניסיון','wrn');return;}
+        
+        const email = document.getElementById('at-email').value;
+        const password = document.getElementById('at-pass').value;
+        
+        if(!email || !password) {
+            toast('חזור אחורה למסך הראשי והזן אימייל וסיסמה קודם', 'wrn');
+            return;
+        }
+
+        const btn = document.querySelector('.ob-finish button');
+        const origText = btn.innerHTML;
+        btn.innerHTML = '<div class="spin" style="border-top-color:#030816"></div>';
+        btn.disabled = true;
+
+        try {
+            // 1. רישום במסד הנתונים
+            const regRes = await apiCall('/api/auth/register', 'POST', {
+                email: email,
+                password: password,
+                fullName: S.profile.name
+            });
+            
+            authToken = regRes.accessToken;
+            localStorage.setItem('careerup_token', authToken);
+
+            // 2. עדכון שאר פרטי הפרופיל שבחרנו באונבורדינג
+            await apiCall('/api/users/profile', 'PUT', {
+                fullName: S.profile.name,
+                field: S.profile.domain,
+                experienceLevel: S.profile.exp
+            });
+
+            S.obStep = 6;
+            renderObStep(); 
+        } catch(e) {
+            toast(e.message, 'wrn');
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
     }
 
     // ═══════════════════════════════════════════════════
@@ -1094,12 +1164,12 @@
         <div class="jt-chip${S.profile.jobTypes.includes(j.k)?' selected':''}" onclick="togJobType('${j.k}',this)">
           ${j.e} ${j.n}
         </div>`).join('')}</div>
-      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← חזרה</button><button class="btn btn-p btn-lg" onclick="obFinish()">🚀 כניסה לאפליקציה!</button></div>`;
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← חזרה</button><button class="btn btn-p btn-lg" onclick="obFinish()">🚀 יצירת חשבון</button></div>`;
         } else if(S.obStep===6){
             c.innerHTML=`
       <div class="ob-finish">
         <span class="ob-finish-icon">✅</span>
-        <div class="ob-finish-title">הפרופיל שלך מוכן, ${S.profile.name || 'משתמש'}!</div>
+        <div class="ob-finish-title">החשבון הוקם, ${S.profile.name || 'משתמש'}!</div>
         <div class="ob-finish-sub">CareerUp תתאים לך את כל הכלים לפי המידע שמסרת</div>
         <button class="btn btn-p btn-lg" onclick="launchApp()">🚀 בוא/י נתחיל</button>
       </div>`;
@@ -1115,7 +1185,6 @@
     
     function obNext(){if(S.obStep===1&&!S.profile.name.trim()){toast('אנא הכנס שם','wrn');return;}if(S.obStep===2&&!S.profile.domain){toast('בחר תחום','wrn');return;}S.obStep++;renderObStep();}
     function obBack(){if(S.obStep>1){S.obStep--;renderObStep();}}
-    function obFinish(){if(!S.profile.exp){toast('בחר רמת ניסיון','wrn');return;}S.obStep=6;renderObStep();}
 
     function launchApp(){
         showScreen('screen-app');
@@ -1131,18 +1200,16 @@
         const pName = document.getElementById('p-name'); if(pName) pName.textContent = d.name || '—';
         const pDomain = document.getElementById('p-domain'); if(pDomain) pDomain.textContent = domainName;
         const pExp = document.getElementById('p-exp'); if(pExp) pExp.textContent = EXP_OPTS.find(x=>x.k===d.exp)?.n || '—';
-        const pSkills = document.getElementById('p-skills-count'); if(pSkills) pSkills.textContent = d.skills.length;
-
+        
         document.querySelectorAll('.xp-val').forEach(el => el.textContent = S.xp);
         document.querySelectorAll('.streak-val').forEach(el => el.textContent = S.streak);
 
         initCVSkills();
         toast('ברוכים הבאים ל-CareerUp 🎉','ok');
-        setTimeout(() => addXP(50), 1000); 
     }
 
     // ═══════════════════════════════════════════════════
-    // AI CHAT - המוח שופר להיות מהיר ולעניין
+    // AI CHAT - Connected securely to Backend
     // ═══════════════════════════════════════════════════
     async function sendMsg() {
         const inp = document.getElementById('chat-inp');
@@ -1161,21 +1228,16 @@
         chatMsgs.appendChild(typingDiv);
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
-        // הזרקת הקשר חכמה ויעילה. מונע ממנו "להזות" דברים
         const userContext = S.profile.domain ? `(רקע: אני מתעניין/ת בתחום ה-${S.profile.domain}. ענה לשאלתי הבאה בקצרה, עד 3 משפטים בעברית): ` : `(ענה לשאלתי הבאה בקצרה, עד 3 משפטים בעברית): `;
         const fullMsgToSend = userContext + msg;
 
-        // טיימר חכם
         const timerId = setTimeout(() => { toast('ה-AI חושב על תשובה איכותית...', 'inf', 4000); }, 5000);
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: fullMsgToSend })
-            });
+            // שדרוג אבטחה: קריאה לשרת בעזרת apiCall שלנו שכוללת את הטוקן!
+            const data = await apiCall('/api/chat', 'POST', { message: fullMsgToSend });
+            
             clearTimeout(timerId);
-            const data = await response.json();
             typingDiv.remove();
             
             chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${formatMD(data.reply)}</div></div>`;
@@ -1183,7 +1245,7 @@
         } catch (err) {
             clearTimeout(timerId);
             typingDiv.remove();
-            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">אופס, שגיאה בחיבור לשרת. ודאי שהגדרת מפתח ב-Vercel.</div></div>`;
+            chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-bubble">אופס, שגיאה בחיבור לשרת. ${err.message}</div></div>`;
         }
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
     }
@@ -1239,14 +1301,9 @@
         if(body) body.style.display = isOpen ? 'none' : 'block';
     }
 
-    // --- שדרוג: ייצוא אמיתי ל-PDF ע"י ספרייה מקצועית ---
     function exportRealPDF() {
         toast('מייצר קובץ PDF אמיתי, אנא המתן...', 'inf');
-        
-        // בוחרים רק את הריבוע של קורות החיים
         const element = document.getElementById('cv-preview-content');
-        
-        // הגדרות לספרייה
         const opt = {
           margin:       0,
           filename:     'CareerUp_Resume.pdf',
@@ -1254,8 +1311,6 @@
           html2canvas:  { scale: 2, useCORS: true },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        // מפעילים את ההורדה האוטומטית
         setTimeout(() => {
             html2pdf().set(opt).from(element).save().then(() => {
                 toast('✅ הקובץ נשמר בהצלחה במחשב!', 'ok');
@@ -1281,21 +1336,13 @@
         toast(`✨ ה-AI משדרג...`, 'inf');
 
         const strictRules = "הוראת מערכת קריטית: פעל כ-API בלבד. עליך להחזיר *אך ורק* את התשובה הסופית. ללא Markdown, ללא כוכביות, ללא סולמיות, ללא אפשרויות בחירה, ללא הסברים וללא טיפים. רק מחרוזת טקסט אחת נקייה שתיכנס ישירות לשדה קלט.";
-
         let promptText = "";
         if (inputId === 'cv-name') promptText = `${strictRules}\nכתוב את השם הזה באנגלית רשמית לקו"ח: ${currentValue}`;
         if (inputId === 'cv-role') promptText = `${strictRules}\nשפר את הגדרת התפקיד הזו לאנגלית מקצועית בהייטק. תחזיר *רק* גרסה אחת מושלמת (לדוגמה: Frontend Developer): ${currentValue}`;
         if (inputId === 'cv-summary') promptText = `${strictRules}\nכתוב פסקת Summary עוצמתית אחת ברצף באנגלית לקו"ח (עד 3 משפטים, ללא בולטים) על בסיס זה: ${currentValue}`;
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: promptText })
-            });
-            
-            const data = await response.json();
-
+            const data = await apiCall('/api/chat', 'POST', { message: promptText });
             if (data.reply && !data.reply.includes('🚨')) {
                 let cleanReply = data.reply.replace(/["*#`]/g, '').trim();
                 inputEl.value = cleanReply;
@@ -1306,18 +1353,17 @@
                 toast('❌ שגיאה בשיפור', 'wrn');
             }
         } catch (error) {
-            toast('❌ תקלת תקשורת', 'wrn');
+            toast('❌ תקלת תקשורת מול השרת', 'wrn');
         }
     }
 
     // ═══════════════════════════════════════════════════
-    // JOB MATCHING & AUTO-TAILOR 
+    // JOB MATCHING & AUTO-TAILOR
     // ═══════════════════════════════════════════════════
-    
     async function analyzeMatch() {
         const jobDesc = document.getElementById('job-desc-match')?.value?.trim();
         if (!jobDesc || jobDesc.length < 20) {
-            toast('⚠️ אנא הדביקי את טקסט המשרה במלואו לתוך התיבה', 'wrn');
+            toast('⚠️ אנא הדביקי את טקסט המשרה במלואו', 'wrn');
             return;
         }
 
@@ -1326,44 +1372,20 @@
         document.getElementById('match-results').style.display = 'none';
 
         try {
-            const response = await fetch('/api/job-match', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    cvText: `Name: ${S.profile.name || 'User'}. Role: Tech Professional. Skills: ${S.profile.skills.join(', ')}.`,
-                    jobDescription: jobDesc
-                })
+            const data = await apiCall('/api/job-match', 'POST', {
+                cvText: `Name: ${S.profile.name || 'User'}. Role: Tech Professional. Skills: ${S.profile.skills.join(', ')}.`,
+                jobDescription: jobDesc
             });
-
-            if (!response.ok) throw new Error('Network error');
-
-            const data = await response.json();
             renderMatch(data);
             toast('🎯 ניתוח AI הושלם!', 'ok');
             addXP(30);
-
         } catch (error) {
-            // רשת ביטחון במקרה שהשרת לא פעיל או חסר קובץ API
             const mockData = {
                 matchScore: 82,
                 matchTitle: "Product Manager / Tech Lead",
                 matchSub: "ניתוח התאמה מבוסס פרופיל",
-                skills: [
-                    { name: "Agile/Scrum", myLevel: 60, required: 80 },
-                    { name: "UX/UI", myLevel: 90, required: 70 },
-                    { name: "Cloud Base", myLevel: 85, required: 90 }
-                ],
-                gaps: [
-                    {
-                        skill: "Agile Methodologies",
-                        reason: "המשרה דורשת ניהול ספרינטים שוטף בסביבת פיתוח מהירה.",
-                        currentChance: 60,
-                        afterCourse: 85,
-                        courseName: "Agile Crash Course",
-                        platform: "Udemy",
-                        duration: "3.5 שעות"
-                    }
-                ]
+                skills: [{ name: "Agile/Scrum", myLevel: 60, required: 80 }, { name: "UX/UI", myLevel: 90, required: 70 }, { name: "Cloud Base", myLevel: 85, required: 90 }],
+                gaps: [{ skill: "Agile Methodologies", reason: "המשרה דורשת ניהול ספרינטים שוטף בסביבת פיתוח מהירה.", currentChance: 60, afterCourse: 85, courseName: "Agile Crash Course", platform: "Udemy", duration: "3.5 שעות" }]
             };
             renderMatch(mockData);
             toast('🎯 ניתוח AI הושלם! (הדגמה מקומית)', 'ok');
@@ -1430,7 +1452,6 @@
     </div>`;
     }
 
-    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה
     async function autoTailorCV() {
         const jobDesc = document.getElementById('job-desc-match')?.value;
         if(!jobDesc) return;
@@ -1440,26 +1461,16 @@
         const sumEl = document.getElementById('cv-summary');
         const roleEl = document.getElementById('cv-role');
         const currentSum = sumEl.value || "Passionate professional looking for new challenges.";
-        
         const prompt = `הוראת מערכת קריטית: פעל כ-API. שכתב את פסקת ה-Summary הבאה לאנגלית כך שתתאים בדיוק למילות המפתח של המשרה הזו. החזר *רק* את הטקסט הסופי באנגלית (עד 3 משפטים ללא בולטים). תקציר נוכחי: ${currentSum}. תיאור משרה: ${jobDesc}`;
         
         try {
-            const res = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: prompt })
-            });
-            const data = await res.json();
-            
+            const data = await apiCall('/api/chat', 'POST', { message: prompt });
             if(data.reply && !data.reply.includes('🚨')) {
                 sumEl.value = data.reply.replace(/["*#`]/g, '').trim();
-                
-                // משנה את התפקיד לזה שנמצא בניתוח המשרה
                 const newRole = document.getElementById('matched-job-title')?.textContent;
                 if(newRole) roleEl.value = newRole;
-                
                 updatePreview(); 
-                switchResTab('scratch'); // מחזיר למסך העריכה לראות את הקסם
+                switchResTab('scratch'); 
                 toast('✅ קורות החיים שודרגו והותאמו למשרה!', 'ok');
                 addXP(20);
             }
@@ -1469,7 +1480,7 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // INTERVIEW COACH (Connected to Backend)
+    // INTERVIEW COACH
     // ═══════════════════════════════════════════════════
     const IV_QS={
         behavioral:['ספר/י לי על פרויקט שאת/ה גאה בו. מה האתגרים ואיך התגברת?','תאר/י קונפליקט שהיה לך מול לקוח או בצוות. איך פתרת?','ספר/י על משימה שנכשלת בה ומה למדת.','מה ההישג המקצועי הגדול ביותר שלך?','איך את/ה מתמודד/ת עם לחץ ועומסי עבודה ושינויים בדרישות הלקוח?'],
@@ -1549,16 +1560,9 @@
         btn.innerHTML='<div class="spin" style="border-top-color:#030816"></div>';btn.disabled=true;
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `שחק תפקיד של מראיין לתפקיד ${role}. השאלה ששאלת אותי היא: "${question}". התשובה שלי היא: "${ans}". תן לי ציון מ-1 עד 100 על התשובה, ומשוב קצר וממוקד איך לשפר אותה לפי שיטת STAR.` })
-            });
-
-            const data = await response.json();
+            const data = await apiCall('/api/chat', 'POST', { message: `שחק תפקיד של מראיין לתפקיד ${role}. השאלה ששאלת אותי היא: "${question}". התשובה שלי היא: "${ans}". תן לי ציון מ-1 עד 100 על התשובה, ומשוב קצר וממוקד איך לשפר אותה לפי שיטת STAR.` });
             const replyText = data.reply || '';
             
-            // חילוץ ציון מתוך התשובה של קלוד
             let score = 80;
             const scoreMatch = replyText.match(/(\d+)/);
             if(scoreMatch) score = parseInt(scoreMatch[1]);
