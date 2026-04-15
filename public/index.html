@@ -112,7 +112,7 @@
         .anim-up{animation:fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) both;}
         .d1{animation-delay:.1s;} .d2{animation-delay:.2s;} .d3{animation-delay:.3s;} .d4{animation-delay:.4s;}
 
-        /* TOGGLE BUTTONS */
+        /* TOGGLE BUTTONS (Lang & Mobile) */
         .lang-toggle{position:fixed;top:24px;left:24px;z-index:500;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px;gap:4px;backdrop-filter:blur(10px);}
         .lang-btn{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;transition:all .3s;}
         .lang-btn.active{background:var(--p);color:#030816;box-shadow:0 0 15px rgba(0,240,255,0.4);}
@@ -592,7 +592,7 @@
                     <div class="ph-title" id="res-title">📄 בונה קו"ח</div>
                     <div class="ph-sub" id="res-sub">כתוב מאפס, העלה קיים, או התאם למשרה</div>
                 </div>
-                <button class="btn btn-p" onclick="exportFile('pdf')">⬇️ ייצוא ל-PDF</button>
+                <button class="btn btn-p" onclick="exportRealPDF()">⬇️ ייצוא ל-PDF</button>
             </div>
 
             <div class="main-tabs">
@@ -672,9 +672,9 @@
                                 <div class="fs-body">
                                     <div class="field-row col2">
                                         <div><div class="field-label">שם מלא <button class="ai-btn" onclick="aiImprove('cv-name')">✨ AI</button></div><input class="inp" id="cv-name" placeholder="Eden Ziso" oninput="updatePreview()"></div>
-                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Frontend Developer" oninput="updatePreview()"></div>
+                                        <div><div class="field-label">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('cv-role')">✨ AI</button></div><input class="inp" id="cv-role" placeholder="Product Manager" oninput="updatePreview()"></div>
                                     </div>
-                                    <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate developer..." oninput="updatePreview()"></textarea></div>
+                                    <div><div class="field-label">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('cv-summary')">✨ שפר עם AI</button></div><textarea class="inp" id="cv-summary" rows="4" placeholder="Passionate professional..." oninput="updatePreview()"></textarea></div>
                                 </div>
                             </div>
                             <div style="display:flex;gap:12px">
@@ -715,13 +715,13 @@
                             <div class="ac good"><div class="ac-title">✅ פורמט תקין</div><div class="ac-body">קריא ומסודר לסריקת ATS</div></div>
                         </div>
                         <div>
-                            <div class="label">ייצוא קובץ</div>
+                            <div class="label">ייצוא קובץ אמיתי למחשב</div>
                             <div class="export-opts" style="margin-bottom:20px; display:flex; gap:16px;">
-                                <div class="card" onclick="exportFile('pdf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
-                                    <div style="font-size:32px;margin-bottom:10px">📄</div><div style="font-size:14px;font-weight:700;color:var(--text)">PDF</div>
+                                <div class="card" onclick="exportRealPDF()" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
+                                    <div style="font-size:32px;margin-bottom:10px">📄</div><div style="font-size:14px;font-weight:700;color:var(--text)">הורד PDF</div>
                                 </div>
-                                <div class="card" onclick="exportFile('word')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s;">
-                                    <div style="font-size:32px;margin-bottom:10px">📝</div><div style="font-size:14px;font-weight:700;color:var(--text)">Word (.docx)</div>
+                                <div class="card" onclick="toast('ייצוא לוורד יפתח בקרוב', 'inf')" style="flex:1; cursor:pointer; text-align:center; border-color:var(--border2); transition:all 0.3s; opacity:0.5">
+                                    <div style="font-size:32px;margin-bottom:10px">📝</div><div style="font-size:14px;font-weight:700;color:var(--text)">Word</div>
                                 </div>
                             </div>
                         </div>
@@ -742,11 +742,11 @@
                 <div class="g2" style="align-items:start">
                     <div style="display:flex;flex-direction:column;gap:16px">
                         <div class="card">
-                            <div class="label">הדבק את תיאור המשרה (Job Description)</div>
-                            <div style="font-size:13px;color:var(--pl);margin-bottom:14px;line-height:1.6">הדבק את הטקסט המלא של המשרה מלינקדאין או מאתר החברה, וה-AI ינתח את ההתאמה שלך ויציע קורסים ושכתוב.</div>
-
-                            <textarea class="inp" id="job-desc-match" rows="6" placeholder="הדבק כאן תיאור משרה מלא..."></textarea>
-                            <button class="btn btn-p btn-full" style="margin-top:16px" onclick="analyzeMatch()">🔍 נתח התאמה ומסלול צמיחה</button>
+                            <div class="label">הדבק את תיאור המשרה (Job Description) מלינקדאין</div>
+                            <div style="font-size:13px;color:var(--pl);margin-bottom:14px;line-height:1.6">הדבק כאן את הטקסט המלא של המשרה שאת מעוניינת בה, וה-AI ינתח את ההתאמה שלך, יציע קורסים וישכתב לך את הקו"ח.</div>
+                            
+                            <textarea class="inp" id="job-desc-match" rows="8" placeholder="דוגמה: Looking for a Product Manager with 2+ years of experience in SaaS..."></textarea>
+                            <button class="btn btn-p btn-full" style="margin-top:16px" onclick="analyzeMatch()">🔍 נתח התאמה למשרה זו</button>
                         </div>
                     </div>
                     <div id="match-results-container">
@@ -785,9 +785,9 @@
                             </div>
                         </div>
                         <div class="suggestions" id="sug-wrap">
-                            <div class="sug-chip" onclick="quickAsk('קו&quot;ח ללא ניסיון')">📄 קו"ח ללא ניסיון</div>
-                            <div class="sug-chip" onclick="quickAsk('כמה שכר לבקש כ-Junior?')">💰 שכר Junior</div>
-                            <div class="sug-chip" onclick="quickAsk('איך מתחילים LinkedIn?')">🔗 LinkedIn</div>
+                            <div class="sug-chip" onclick="quickAsk('איך לכתוב תקציר לקורות חיים?')">📄 איך לכתוב Summary?</div>
+                            <div class="sug-chip" onclick="quickAsk('איך מתכוננים לראיון HR?')">🎯 הכנה לראיון HR</div>
+                            <div class="sug-chip" onclick="quickAsk('איך להתבלט בלינקדאין?')">🔗 טיפים ל-LinkedIn</div>
                         </div>
                         <div class="chat-msgs" id="chat-msgs">
                             <div class="msg msg-ai">
@@ -836,7 +836,7 @@
                         </div>
                         <div style="margin-bottom:16px">
                             <label style="font-size:12px;font-weight:700;color:var(--pl);display:block;margin-bottom:6px">תפקיד</label>
-                            <input class="inp" id="iv-role" placeholder="Frontend Developer">
+                            <input class="inp" id="iv-role" placeholder="Product Manager">
                         </div>
                     </div>
 
@@ -997,7 +997,6 @@
         if(p==='resume') initCVSkills();
     }
 
-    // --- הפונקציה שהופכת את ה-Markdown של קלוד ל-HTML יפה ---
     function formatMD(text) {
         if (!text) return '';
         return text
@@ -1120,8 +1119,6 @@
         const chatMsgs = document.getElementById('chat-msgs');
         chatMsgs.innerHTML += `<div class="msg msg-user"><div class="m-bubble">${msg}</div></div>`;
         inp.value = '';
-        
-        // Auto scroll
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
         const typingDiv = document.createElement('div');
@@ -1130,11 +1127,11 @@
         chatMsgs.appendChild(typingDiv);
         setTimeout(() => { chatMsgs.scrollTop = chatMsgs.scrollHeight; }, 50);
 
-        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה ויימנע מחפירות מיותרות
-        const userContext = `(שים לב: המשתמשת שואלת אותך שאלה עכשיו. הקשר עליה: קוראים לה ${S.profile.name || 'עדן'}, היא עובדת בתפקיד ניהול מוצר (Product) ו-CSM במגזר הביטחוני. ענה לה ישירות, קצר ולעניין, באנרגיה טובה, מקסימום 2 פסקאות). השאלה: `;
+        // הזרקת הקשר חכמה שקלוד ידע למי הוא עונה, פלוס הגבלת אורך
+        const userContext = `הקשר: המשתמשת שואלת אותך שאלה עכשיו. קוראים לה ${S.profile.name || 'עדן'}, עובדת בתפקיד ${S.profile.domain || 'Product'} בהייטק. חוק חשוב: ענה ישירות, לעניין, באנרגיה טובה, מקסימום ב-2 פסקאות קצרות. השאלה שלה היא: `;
         const fullMsgToSend = userContext + msg;
 
-        // טיימר חכם - אם הבקשה מתעכבת נודיע למשתמש שזה בטיפול
+        // טיימר חכם למניעת תחושת איטיות
         const timerId = setTimeout(() => { toast('ה-AI מנתח, זה ייקח עוד כמה שניות...', 'inf', 4000); }, 5000);
 
         try {
@@ -1147,7 +1144,6 @@
             const data = await response.json();
             typingDiv.remove();
             
-            // שימוש בפונקציית העיצוב ל-Markdown שבנינו
             chatMsgs.innerHTML += `<div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">${formatMD(data.reply)}</div></div>`;
             addXP(10); 
         } catch (err) {
@@ -1209,16 +1205,28 @@
         if(body) body.style.display = isOpen ? 'none' : 'block';
     }
 
-    function exportFile(type) {
-        toast(`מכין קובץ ${type.toUpperCase()} להורדה...`, 'inf');
+    // --- שדרוג: ייצוא אמיתי ל-PDF ע"י ספרייה מקצועית ---
+    function exportRealPDF() {
+        toast('מייצר קובץ PDF אמיתי, אנא המתן...', 'inf');
+        
+        // בוחרים רק את הריבוע של קורות החיים
+        const element = document.getElementById('cv-preview-content');
+        
+        // הגדרות לספרייה
+        const opt = {
+          margin:       0,
+          filename:     'CareerUp_Resume.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // מפעילים את ההורדה
         setTimeout(() => {
-            if(type === 'pdf') {
-                toast('✅ פותח חלונית הדפסה לקובץ...', 'ok');
-                window.print(); // מפעיל את ה-CSS המיוחד שהוספנו להדפסה נקייה
-            } else {
-                toast('✅ הקובץ מוכן! (הדגמה)', 'ok');
-            }
-        }, 1500);
+            html2pdf().set(opt).from(element).save().then(() => {
+                toast('✅ הקובץ נשמר בהצלחה במחשב!', 'ok');
+            });
+        }, 1000);
     }
 
     function updatePreview() {
@@ -1269,12 +1277,13 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // JOB MATCHING & AUTO-TAILOR
+    // JOB MATCHING & AUTO-TAILOR (FIXED: Real Parsing)
     // ═══════════════════════════════════════════════════
+    
     async function analyzeMatch() {
         const jobDesc = document.getElementById('job-desc-match')?.value?.trim();
         if (!jobDesc || jobDesc.length < 20) {
-            toast('⚠️ הדבק תיאור משרה מלא אל תוך התיבה', 'wrn');
+            toast('⚠️ אנא הדביקי את טקסט המשרה במלואו', 'wrn');
             return;
         }
 
@@ -1287,12 +1296,12 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    cvText: S.profile.skills.join(', ') || `Name: ${S.profile.name || 'Eden'}. Role: CSM & Product. Skills: GCP, Agile, UI/UX, Figma.`,
+                    cvText: `Name: ${S.profile.name || 'Eden'}. Role: CSM & Product. Skills: GCP, Agile, UI/UX, Figma.`,
                     jobDescription: jobDesc
                 })
             });
 
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Network error');
 
             const data = await response.json();
             renderMatch(data);
@@ -1300,7 +1309,7 @@
             addXP(30);
 
         } catch (error) {
-            // רשת ביטחון במקרה שהשרת לא פעיל או חסר קובץ - יציג הדגמה יפה
+            // רשת ביטחון במקרה שהשרת לא פעיל או התנתק
             const mockData = {
                 matchScore: 82,
                 matchTitle: "Product Manager",
@@ -1387,7 +1396,7 @@
     </div>`;
     }
 
-    // הפונקציה החדשה לשכתוב אוטומטי של קורות חיים לפי משרה
+    // הפונקציה לשכתוב אוטומטי של קורות חיים לפי משרה
     async function autoTailorCV() {
         const jobDesc = document.getElementById('job-desc-match')?.value;
         if(!jobDesc) return;
@@ -1426,7 +1435,7 @@
     }
 
     // ═══════════════════════════════════════════════════
-    // INTERVIEW COACH (Connected to Backend)
+    // INTERVIEW COACH
     // ═══════════════════════════════════════════════════
     const IV_QS={
         behavioral:['ספרי לי על פרויקט שאת גאה בו. מה האתגרים ואיך התגברת?','תארי קונפליקט שהיה לך מול לקוח או בצוות. איך פתרת?','ספרי על משימה שנכשלת בה ומה למדת.','מה ההישג המקצועי הגדול ביותר שלך?','איך את מתמודדת עם לחץ ועומסי עבודה ושינויים בדרישות הלקוח?'],
