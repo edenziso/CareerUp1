@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerUp | מסלול הצמיחה שלך</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Firebase SDK (compat - פשוט לשימוש) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════
+// ⚠️  הערכים שלך מ-Firebase Console (careerup-5e32e)
+// ══════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey:            "AIzaSyCuc8SYxUDT4C0wHC1Qgb8lHO",
+  authDomain:        "careerup-5e32e.firebaseapp.com",
+  projectId:         "careerup-5e32e",
+  storageBucket:     "careerup-5e32e.firebasestorage.app",
+  messagingSenderId: "995318938449",
+  appId:             "1:995318938449:web:f3c7bcc87c2258707ff170"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+let currentUser = null;
+</script>
+
+<style>
+:root {
+  --bg:#030816; --surface:rgba(15,23,42,.8); --surface2:rgba(30,41,59,.85);
+  --surface3:rgba(51,65,85,.9); --border:rgba(0,240,255,.15);
+  --border2:rgba(0,240,255,.3); --p:#00f0ff; --pl:#7dd3fc;
+  --p2:#3b82f6; --p3:#10b981; --amber:#f59e0b;
+  --text:#f8fafc; --muted:#94a3b8; --dim:#475569;
+  --r:12px; --rm:16px; --rl:24px; --rxl:32px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 80% 10%,rgba(0,240,255,.07) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 40% at 10% 80%,rgba(59,130,246,.08) 0%,transparent 60%)}
+.bg-dots{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(0,240,255,.1) 1px,transparent 1px);background-size:40px 40px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:24px;backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .3s;font-family:'Heebo',sans-serif}
+.btn-p{background:linear-gradient(135deg,var(--p2),var(--p));color:#030816;box-shadow:0 0 15px rgba(0,240,255,.3)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,240,255,.5)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-g{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-g:hover{background:var(--surface3);border-color:var(--p)}
+.btn-ghost{background:transparent;color:var(--pl);border:1px solid transparent}
+.btn-ghost:hover{color:var(--p);border-color:var(--border2);background:rgba(0,240,255,.05)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+.btn-lg{padding:14px 30px;font-size:15px;border-radius:var(--rm)}
+.btn-full{width:100%}
+.inp{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;color:var(--text);font-size:13px;font-family:'Heebo',sans-serif;outline:none;transition:all .3s;resize:none}
+.inp:focus{border-color:var(--p);box-shadow:0 0 15px rgba(0,240,255,.2)}
+.inp::placeholder{color:var(--dim)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700}
+.b-p{background:rgba(0,240,255,.1);color:var(--p);border:1px solid rgba(0,240,255,.3)}
+.b-g{background:rgba(16,185,129,.1);color:var(--p3);border:1px solid rgba(16,185,129,.3)}
+.b-a{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+/* Toasts */
+#tw{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none}
+.toast{background:rgba(15,23,42,.98);border:1px solid var(--border);border-radius:14px;padding:12px 24px;font-size:13px;font-weight:600;animation:tIn .4s ease;backdrop-filter:blur(10px);white-space:nowrap}
+.toast.ok{border-color:rgba(16,185,129,.5);color:var(--p3)}
+.toast.inf{border-color:rgba(0,240,255,.5);color:var(--p)}
+.toast.wrn{border-color:rgba(245,158,11,.5);color:var(--amber)}
+@keyframes tIn{from{opacity:0;transform:translateY(20px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes tOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
+
+/* Screens */
+.screen{display:none;min-height:100vh;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}
+
+/* Loading */
+#screen-loading{align-items:center;justify-content:center}
+
+/* Auth */
+#screen-auth{align-items:center;justify-content:center;padding:24px}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:48px;width:440px;max-width:100%;backdrop-filter:blur(20px);box-shadow:0 25px 60px rgba(0,0,0,.5)}
+.logo-text{font-family:'Outfit',sans-serif;font-size:30px;font-weight:900;letter-spacing:-1px}
+.logo-text span{color:var(--p);text-shadow:0 0 20px rgba(0,240,255,.5)}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:15px 24px;background:white;color:#1f2937;border:none;border-radius:var(--rm);font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,.3);font-family:'Heebo',sans-serif}
+.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.btn-google:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* Onboarding */
+#screen-ob{align-items:center;justify-content:center;padding:32px}
+.ob-wrap{width:740px;max-width:100%}
+.ob-prog{height:4px;background:rgba(255,255,255,.05);border-radius:99px;margin-bottom:32px;overflow:hidden}
+.ob-prog-fill{height:100%;background:linear-gradient(90deg,var(--p2),var(--p));border-radius:99px;transition:width .5s ease}
+.ob-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:44px;backdrop-filter:blur(20px);box-shadow:0 25px 60px rgba(0,0,0,.5)}
+.ob-q{font-family:'Outfit',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
+.ob-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.ob-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
+.domain-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
+.domain-card{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--rm);padding:16px 8px;cursor:pointer;text-align:center;transition:all .25s}
+.domain-card:hover{border-color:var(--pl);transform:translateY(-3px)}
+.domain-card.sel{border-color:var(--p);background:rgba(0,240,255,.08);box-shadow:0 0 0 1px var(--p);transform:translateY(-3px)}
+.domain-card.sel .dc-name{color:var(--p)}
+.dc-icon{font-size:26px;margin-bottom:8px}
+.dc-name{font-size:11px;font-weight:700}
+.dc-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.skill-scroll{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-right:4px}
+.skill-scroll::-webkit-scrollbar{width:4px}
+.skill-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+.s-cat-title{font-size:11px;font-weight:700;color:var(--pl);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.s-chips{display:flex;flex-wrap:wrap;gap:8px}
+.s-chip{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(0,0,0,.4);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.s-chip:hover{border-color:var(--pl)}
+.s-chip.sel{background:rgba(0,240,255,.15);border-color:var(--p);color:var(--p)}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.exp-card{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--rm);padding:16px;cursor:pointer;transition:all .25s;text-align:center}
+.exp-card:hover{border-color:var(--pl);transform:translateY(-2px)}
+.exp-card.sel{border-color:var(--p);background:rgba(0,240,255,.1)}
+
+/* App */
+#screen-app{display:none!important}
+#screen-app.active{display:flex!important;flex-direction:row!important}
+.sidebar{width:256px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;right:0;bottom:0;z-index:100;backdrop-filter:blur(24px);box-shadow:8px 0 30px rgba(0,0,0,.5)}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:0 22px 24px;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:14px}
+.sb-txt{font-family:'Outfit',sans-serif;font-size:20px;font-weight:900}
+.sb-txt span{color:var(--p)}
+.nav-item{display:flex;align-items:center;gap:12px;padding:13px 22px;cursor:pointer;transition:all .2s;color:var(--muted);font-size:14px;font-weight:600;border-right:3px solid transparent}
+.nav-item:hover{background:linear-gradient(90deg,rgba(0,240,255,.05),transparent);color:var(--text)}
+.nav-item.active{background:linear-gradient(90deg,rgba(0,240,255,.1),transparent);color:var(--p);border-right-color:var(--p)}
+.nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.sb-div{height:1px;background:rgba(255,255,255,.05);margin:10px 0}
+.sb-footer{margin-top:auto;padding:18px 22px;border-top:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:12px}
+.user-pill{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.3);padding:11px;border-radius:var(--rm);border:1px solid var(--border);cursor:pointer;transition:border-color .2s}
+.user-pill:hover{border-color:var(--pl)}
+.u-av{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--p);flex-shrink:0}
+.u-av-ph{width:34px;height:34px;background:linear-gradient(135deg,var(--p2),var(--p));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#030816;flex-shrink:0}
+.u-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.u-sub{font-size:11px;color:var(--pl)}
+.main{margin-right:256px;flex:1;padding:32px 36px;overflow-y:auto;min-height:100vh}
+.page{display:none;animation:fadeUp .4s ease}
+.page.active{display:block}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.ph-title{font-family:'Outfit',sans-serif;font-size:30px;font-weight:900;letter-spacing:-.5px}
+.ph-sub{font-size:13px;color:var(--pl);margin-top:5px}
+
+/* Stat cards */
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:22px;position:relative;overflow:hidden;transition:all .3s;backdrop-filter:blur(12px)}
+.sc:hover{border-color:var(--pl);transform:translateY(-3px)}
+.sc-glow{position:absolute;top:-30px;right:-30px;width:110px;height:110px;border-radius:50%;opacity:.2;filter:blur(28px)}
+.sc-lbl{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.sc-val{font-size:38px;font-weight:900;letter-spacing:-2px;margin:6px 0 4px;font-family:'Outfit',sans-serif}
+.sc-ch{font-size:12px;font-weight:600}
+
+/* Chat */
+.chat-wrap{display:flex;flex-direction:column;height:62vh;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.chat-hdr{padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.2)}
+.agent-av{width:38px;height:38px;background:linear-gradient(135deg,var(--p2),var(--p));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.dot-online{width:8px;height:8px;background:var(--p);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 8px var(--p)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.chat-msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.chat-msgs::-webkit-scrollbar{width:5px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+.msg{display:flex;gap:10px;animation:fadeUp .25s ease}
+.msg.msg-user{flex-direction:row-reverse}
+.m-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg-ai .m-av{background:linear-gradient(135deg,var(--p2),var(--p))}
+.msg-user .m-av{background:rgba(255,255,255,.08);border:1px solid var(--border2);font-size:11px}
+.m-bubble{max-width:78%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6}
+.msg-ai .m-bubble{background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.msg-user .m-bubble{background:linear-gradient(135deg,var(--p2),var(--p));color:#030816;font-weight:500}
+.chat-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:10px;align-items:flex-end;background:rgba(0,0,0,.15)}
+.typing{display:flex;gap:5px;padding:8px 12px}
+.dot{width:6px;height:6px;background:var(--p);border-radius:50%;animation:wave 1.2s infinite}
+.dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.sug-row{display:flex;flex-wrap:wrap;gap:8px;padding:10px 18px 0;background:rgba(0,0,0,.1);border-top:1px solid rgba(255,255,255,.04)}
+.sug-chip{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.2);color:var(--pl);cursor:pointer;transition:all .2s}
+.sug-chip:hover{background:rgba(0,240,255,.15);transform:translateY(-1px)}
+
+/* Resume */
+.main-tabs{display:flex;gap:4px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--rm);padding:5px;width:fit-content;margin-bottom:24px}
+.mtab{padding:9px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .3s}
+.mtab.active{background:var(--surface3);color:var(--p);box-shadow:0 0 0 1px var(--border2)}
+.wiz-steps{display:flex;align-items:center;margin-bottom:28px;gap:0;overflow-x:auto;padding-bottom:4px}
+.ws{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;transition:all .3s;white-space:nowrap}
+.ws.active{color:var(--p)}.ws.done{color:var(--pl)}
+.ws-num{width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.4);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:all .3s}
+.ws.active .ws-num{background:var(--p);border-color:var(--p);color:#030816;box-shadow:0 0 18px rgba(0,240,255,.5)}
+.ws.done .ws-num{border-color:var(--pl);color:var(--pl)}
+.ws-sep{flex:1;height:2px;background:rgba(255,255,255,.05);margin:0 10px;min-width:16px;max-width:60px;transition:background .4s}
+.ws-sep.done{background:var(--pl)}
+.tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.tpl-card{background:var(--surface2);border:2px solid var(--border);border-radius:var(--rm);overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
+.tpl-card:hover{border-color:var(--pl);transform:translateY(-3px)}
+.tpl-card.sel{border-color:var(--p);box-shadow:0 0 0 1px var(--p),0 0 22px rgba(0,240,255,.22);transform:translateY(-3px)}
+.tpl-prev{width:100%;aspect-ratio:.707;background:#fff;overflow:hidden}
+.tpl-check{position:absolute;top:8px;right:8px;width:22px;height:22px;background:var(--p);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:11px;color:#030816}
+.tpl-card.sel .tpl-check{display:flex}
+.tpl-name{padding:9px 12px;font-size:12px;font-weight:700;background:rgba(0,0,0,.2)}
+.tpl-tag{font-size:10px;color:var(--pl);margin-top:2px}
+.rm{padding:10px;background:white;color:#0f172a;height:100%;display:flex;flex-direction:column;gap:3px}
+.rm-line{height:3px;background:#e2e8f0;border-radius:99px;margin-bottom:2px}
+.rm-line.s{width:65%}
+.fl{font-size:12px;font-weight:700;color:var(--pl);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.ai-btn{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--p);background:rgba(0,240,255,.08);border:1px solid rgba(0,240,255,.25);border-radius:6px;padding:3px 9px;cursor:pointer;transition:all .2s}
+.ai-btn:hover{background:rgba(0,240,255,.18)}
+.cv-wrap{background:white;border-radius:var(--rm);overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);position:sticky;top:20px;max-height:74vh;overflow-y:auto}
+.cv{width:100%;font-family:'Heebo',sans-serif;color:#0f172a;font-size:12px;padding:28px;line-height:1.6}
+.cv.en{font-family:'Outfit',sans-serif;direction:ltr;text-align:left}
+.cv-hdr{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #3b82f6}
+.cv-name-el{font-size:22px;font-weight:900;color:#3b82f6;margin-bottom:3px}
+.cv-role-el{font-size:12px;color:#475569;font-weight:600;margin-bottom:6px}
+.cv-contacts{display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:#64748b}
+.cv-sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#3b82f6;margin:14px 0 7px;display:flex;align-items:center;gap:8px}
+.cv-sec::after{content:'';flex:1;height:1px;background:#3b82f6;opacity:.3}
+.cv-sum{font-size:11px;color:#334155}
+
+/* Skill bars */
+.sbar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.sbar-lbl{font-size:11px;width:105px;color:var(--muted);font-weight:500;flex-shrink:0}
+.sbar-track{flex:1;height:6px;background:rgba(0,0,0,.4);border-radius:99px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:99px}
+.sbar-val{font-size:11px;font-weight:700;width:28px;font-family:'Space Mono',monospace;text-align:right}
+.ring-wrap{position:relative;width:90px;height:90px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-num{font-size:20px;font-weight:900;font-family:'Outfit',sans-serif}
+.ring-lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
+
+/* Mobile */
+@media(max-width:768px){
+  .sidebar{width:100%;height:66px;bottom:0;top:auto;flex-direction:row;padding:0;justify-content:space-around;border-left:none;border-top:1px solid var(--border)}
+  .sb-logo,.sb-div,.sb-footer{display:none}
+  .nav-item{flex-direction:column;padding:7px 0;gap:3px;border:none;justify-content:center;border-top:3px solid transparent;width:25%}
+  .nav-item.active{background:transparent;border-top-color:var(--p)}
+  .nav-item span:not(.nav-icon){font-size:10px}
+  .main{margin-right:0;padding:16px 14px 80px}
+  .g2,.g3{grid-template-columns:1fr!important}
+  .tpl-grid{grid-template-columns:1fr 1fr}
+  .domain-grid{grid-template-columns:repeat(2,1fr)}
+  .cv-wrap{display:none}
+  .ph{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="bg-dots"></div>
+<div id="tw"></div>
+
+<!-- LOADING -->
+<div class="screen active" id="screen-loading">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px">
+    <div style="font-family:'Outfit',sans-serif;font-size:42px;font-weight:900">Career<span style="color:var(--p)">Up</span></div>
+    <div class="spin" style="width:28px;height:28px;border-width:3px;color:var(--p)"></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div class="screen" id="screen-auth">
+  <div class="auth-card anim-up" style="margin:auto">
+    <div style="display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:32px">
+      <div class="logo-text">Career<span>Up</span></div>
+    </div>
+    <div style="font-size:22px;font-weight:900;text-align:center;margin-bottom:8px">התחל את המסע שלך 🚀</div>
+    <div style="font-size:14px;color:var(--muted);text-align:center;margin-bottom:32px;line-height:1.6">פלטפורמת ה-AI לחיפוש עבודה בהייטק הישראלי</div>
+    <button class="btn-google" id="btn-google" onclick="signInWithGoogle()">
+      <svg width="22" height="22" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      המשך עם Google
+    </button>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span>🔒</span><span>מאובטח — כניסה עם חשבון Google</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span>☁️</span><span>כל הנתונים נשמרים בענן</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span>🤖</span><span>Gemini AI לניתוח משרות ושיפור קו"ח</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="screen" id="screen-ob">
+  <div class="ob-wrap anim-up" style="margin:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900">Career<span style="color:var(--p)">Up</span></div>
+      <div style="font-size:12px;font-family:'Space Mono',monospace;color:var(--pl);background:rgba(0,240,255,.1);padding:4px 14px;border-radius:99px;border:1px solid rgba(0,240,255,.2)" id="ob-pill">שלב 1 מתוך 3</div>
+    </div>
+    <div class="ob-prog"><div class="ob-prog-fill" id="ob-fill" style="width:33%"></div></div>
+    <div class="ob-card" id="ob-body"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="screen" id="screen-app">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-txt">Career<span>Up</span></div></div>
+    <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span><span>דשבורד</span></div>
+    <div class="nav-item" data-page="resume"><span class="nav-icon">📄</span><span>בונה קו"ח</span></div>
+    <div class="nav-item" data-page="interview"><span class="nav-icon">🎯</span><span>ראיונות</span></div>
+    <div class="nav-item" data-page="coach"><span class="nav-icon">🤖</span><span>מאמן קריירה</span></div>
+    <div class="sb-div"></div>
+    <div class="sb-footer">
+      <div style="display:flex;justify-content:space-between">
+        <div class="badge b-a">🔥 <span id="sb-streak">0</span> ימים</div>
+        <div class="badge b-p">💎 <span id="sb-xp">0</span> XP</div>
+      </div>
+      <div class="user-pill" onclick="doSignOut()">
+        <div id="av-wrap"></div>
+        <div style="overflow:hidden">
+          <div class="u-name" id="u-name">—</div>
+          <div class="u-sub">לחץ לניתוק</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ph-title" id="dash-hi">שלום! 👋</div>
+          <div class="ph-sub">מה נשפר היום?</div>
+        </div>
+        <button class="btn btn-p" onclick="navTo('resume');switchTab('match')">🎯 ניתוח משרה חדשה</button>
+      </div>
+      <div class="g3" style="margin-bottom:22px">
+        <div class="sc anim-up d1"><div class="sc-glow" style="background:var(--p)"></div><div class="sc-lbl">ממוצע התאמה</div><div class="sc-val" style="color:var(--p)" id="d-match">—</div><div class="sc-ch" style="color:var(--muted)">למשרות שניתחת</div></div>
+        <div class="sc anim-up d2"><div class="sc-glow" style="background:var(--p3)"></div><div class="sc-lbl">קורות חיים שמורים</div><div class="sc-val" style="color:var(--p3)" id="d-resumes">0</div><div class="sc-ch" style="color:var(--p3)">גיבוי ענן ✓</div></div>
+        <div class="sc anim-up d3"><div class="sc-glow" style="background:var(--amber)"></div><div class="sc-lbl">ראיונות תורגלו</div><div class="sc-val" style="color:var(--amber)" id="d-iv">0</div><div class="sc-ch" style="color:var(--amber)">המשך להתאמן!</div></div>
+      </div>
+      <div class="card">
+        <div class="label">☁️ קורות החיים שלי</div>
+        <div id="resumes-list" style="margin-top:10px"><div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">טוען...</div></div>
+        <button class="btn btn-p" style="margin-top:14px" onclick="navTo('resume')">➕ צור קורות חיים חדשים</button>
+      </div>
+    </div>
+
+    <!-- RESUME -->
+    <div class="page" id="page-resume">
+      <div class="ph">
+        <div><div class="ph-title">📄 בונה קו"ח</div><div class="ph-sub" id="ai-lbl">Gemini AI</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-g" onclick="saveResume()">💾 שמור בענן</button>
+          <button class="btn btn-p" onclick="exportPDF()">⬇️ PDF</button>
+        </div>
+      </div>
+      <div class="main-tabs">
+        <button class="mtab active" onclick="switchTab('scratch')">✍️ כתיבה מאפס</button>
+        <button class="mtab" onclick="switchTab('match')">🎯 התאמה למשרה</button>
+      </div>
+
+      <!-- scratch -->
+      <div id="tab-scratch">
+        <div class="wiz-steps">
+          <div class="ws active" id="ws1" onclick="goWiz(1)"><div class="ws-num">1</div>תבנית</div>
+          <div class="ws-sep" id="wsep1"></div>
+          <div class="ws" id="ws2" onclick="goWiz(2)"><div class="ws-num">2</div>שפה</div>
+          <div class="ws-sep" id="wsep2"></div>
+          <div class="ws" id="ws3" onclick="goWiz(3)"><div class="ws-num">3</div>תוכן</div>
+          <div class="ws-sep" id="wsep3"></div>
+          <div class="ws" id="ws4" onclick="goWiz(4)"><div class="ws-num">4</div>ייצוא</div>
+        </div>
+        <div id="wstep1">
+          <div class="label">בחר תבנית</div>
+          <div class="tpl-grid">
+            <div class="tpl-card sel" onclick="pickTpl('classic',this)"><div class="tpl-prev"><div class="rm"><div style="font-weight:900;font-size:8px;color:#2563eb;border-bottom:1px solid #2563eb;padding-bottom:4px;margin-bottom:4px">FULL NAME</div><div class="rm-line" style="background:#2563eb;height:2px;width:50%;margin-bottom:5px"></div><div class="rm-line"></div><div class="rm-line s"></div></div></div><div class="tpl-check">✓</div><div class="tpl-name">Classic<div class="tpl-tag">🏆 מומלץ</div></div></div>
+            <div class="tpl-card" onclick="pickTpl('modern',this)"><div class="tpl-prev"><div class="rm" style="padding:0"><div style="background:linear-gradient(135deg,#3b82f6,#00f0ff);padding:10px;margin-bottom:6px"><div style="font-weight:900;font-size:8px;color:white">FULL NAME</div></div><div style="padding:0 8px"><div class="rm-line"></div><div class="rm-line s"></div></div></div></div><div class="tpl-check">✓</div><div class="tpl-name">Modern<div class="tpl-tag">✨ הייטק</div></div></div>
+            <div class="tpl-card" onclick="pickTpl('minimal',this)"><div class="tpl-prev"><div class="rm"><div style="font-weight:900;font-size:9px;border-bottom:2px solid #0f172a;padding-bottom:3px;margin-bottom:5px">FULL NAME</div><div class="rm-line"></div><div class="rm-line s"></div></div></div><div class="tpl-check">✓</div><div class="tpl-name">Minimal<div class="tpl-tag">🎯 נקי</div></div></div>
+            <div class="tpl-card" onclick="pickTpl('sidebar',this)"><div class="tpl-prev"><div class="rm" style="padding:0;flex-direction:row;gap:0"><div style="width:34%;background:#2563eb;padding:7px 5px"><div style="font-size:6px;font-weight:900;color:white">NAME</div></div><div style="flex:1;padding:7px 5px"><div class="rm-line"></div><div class="rm-line s"></div></div></div></div><div class="tpl-check">✓</div><div class="tpl-name">Sidebar<div class="tpl-tag">💼 בולט</div></div></div>
+          </div>
+          <button class="btn btn-p btn-lg" onclick="goWiz(2)">הבא – שפה →</button>
+        </div>
+        <div id="wstep2" style="display:none">
+          <div class="g2" style="margin-bottom:24px;max-width:500px">
+            <div class="card lang-opt sel" onclick="pickLang('en',this)" style="cursor:pointer;text-align:center;padding:28px"><div style="font-size:30px;margin-bottom:10px">🇺🇸</div><div style="font-weight:800">English</div><div style="font-size:11px;color:var(--muted);margin-top:4px">מומלץ להייטק</div></div>
+            <div class="card lang-opt" onclick="pickLang('he',this)" style="cursor:pointer;text-align:center;padding:28px"><div style="font-size:30px;margin-bottom:10px">🇮🇱</div><div style="font-weight:800">עברית</div><div style="font-size:11px;color:var(--muted);margin-top:4px">משרות ספציפיות</div></div>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="goWiz(1)">← חזרה</button><button class="btn btn-p btn-lg" onclick="goWiz(3)">הבא – תוכן →</button></div>
+        </div>
+        <div id="wstep3" style="display:none">
+          <div class="g2" style="align-items:start">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div><div class="fl">שם מלא <button class="ai-btn" onclick="aiImprove('f-name')">✨ AI</button></div><input class="inp" id="f-name" placeholder="Your Full Name" oninput="livePreview()"></div>
+              <div><div class="fl">תפקיד מבוקש <button class="ai-btn" onclick="aiImprove('f-role')">✨ AI</button></div><input class="inp" id="f-role" placeholder="Frontend Developer" oninput="livePreview()"></div>
+              <div><div class="fl">אימייל</div><input class="inp" id="f-email" placeholder="you@email.com" oninput="livePreview()"></div>
+              <div><div class="fl">טלפון</div><input class="inp" id="f-phone" placeholder="050-0000000" oninput="livePreview()"></div>
+              <div><div class="fl">לינקדאין</div><input class="inp" id="f-linkedin" placeholder="linkedin.com/in/yourname" oninput="livePreview()"></div>
+              <div><div class="fl">תקציר מקצועי <button class="ai-btn" onclick="aiImprove('f-summary')">✨ שפר</button></div><textarea class="inp" id="f-summary" rows="4" placeholder="Passionate developer with..." oninput="livePreview()"></textarea></div>
+              <div style="display:flex;gap:10px"><button class="btn btn-ghost" onclick="goWiz(2)">← חזרה</button><button class="btn btn-p btn-lg" onclick="goWiz(4)">הבא – ייצוא →</button></div>
+            </div>
+            <div>
+              <div class="label">תצוגה מקדימה</div>
+              <div class="cv-wrap">
+                <div class="cv en" id="cv-preview">
+                  <div class="cv-hdr"><div class="cv-name-el" id="pr-name">Your Name</div><div class="cv-role-el" id="pr-role">Your Role</div><div class="cv-contacts"><span id="pr-email"></span><span id="pr-phone"></span><span id="pr-linkedin"></span></div></div>
+                  <div class="cv-sec">Professional Summary</div>
+                  <div class="cv-sum" id="pr-summary">Your summary will appear here...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="wstep4" style="display:none">
+          <div class="g2" style="max-width:600px">
+            <div class="card" onclick="exportPDF()" style="cursor:pointer;text-align:center;padding:32px;border-color:var(--border2)"><div style="font-size:36px;margin-bottom:10px">📄</div><div style="font-weight:800;font-size:15px">הורד PDF</div></div>
+            <div class="card" onclick="saveResume()" style="cursor:pointer;text-align:center;padding:32px;border-color:rgba(16,185,129,.3)"><div style="font-size:36px;margin-bottom:10px">☁️</div><div style="font-weight:800;font-size:15px;color:var(--p3)">שמור ב-Firebase</div><div style="font-size:12px;color:var(--muted);margin-top:4px">גיבוי ענן + גישה מכל מכשיר</div></div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:16px" onclick="goWiz(3)">← חזרה לעריכה</button>
+        </div>
+      </div>
+
+      <!-- match -->
+      <div id="tab-match" style="display:none">
+        <div class="g2" style="align-items:start">
+          <div class="card">
+            <div class="label">הדבק תיאור משרה מלינקדאין</div>
+            <div style="font-size:13px;color:var(--pl);margin-bottom:12px;line-height:1.6">Gemini יבדוק את ההתאמה שלך ויציע קורסים לסגירת פערים.</div>
+            <textarea class="inp" id="jd-input" rows="8" placeholder="We are looking for a Product Manager with 2+ years of experience..."></textarea>
+            <button class="btn btn-p btn-full" style="margin-top:12px" onclick="analyzeMatch()">🔍 נתח התאמה עם AI</button>
+          </div>
+          <div id="match-box">
+            <div class="card" style="text-align:center;padding:48px;border:2px dashed var(--border2)"><div style="font-size:40px;margin-bottom:12px">🎯</div><div style="color:var(--muted);font-size:14px">הדבק תיאור משרה והתחל</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERVIEW -->
+    <div class="page" id="page-interview">
+      <div class="ph">
+        <div><div class="ph-title">🎯 מאמן ראיונות AI</div><div class="ph-sub">תרגול עם משוב Gemini</div></div>
+        <button class="btn btn-p" onclick="startIV()">▶ התחל</button>
+      </div>
+      <div class="g2" style="align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="label">הגדרות</div>
+            <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;color:var(--pl);display:block;margin-bottom:6px">סוג ראיון</label><select class="inp" id="iv-type"><option value="behavioral">Behavioral (STAR)</option><option value="hr">HR / כללי</option><option value="technical">Technical</option></select></div>
+            <div><label style="font-size:12px;font-weight:700;color:var(--pl);display:block;margin-bottom:6px">תפקיד</label><input class="inp" id="iv-role" placeholder="Frontend Developer"></div>
+          </div>
+          <div class="card" id="iv-panel" style="display:none;border-color:var(--p)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-weight:800;font-size:15px">🎙️ שאלה</div><span class="badge b-p" id="iv-qnum">1/5</span></div>
+            <div style="font-size:15px;line-height:1.6;margin-bottom:18px;padding:14px;background:rgba(0,0,0,.2);border-radius:var(--r)" id="iv-q">טוען...</div>
+            <textarea class="inp" id="iv-ans" rows="5" placeholder="כתוב את תשובתך לפי STAR..."></textarea>
+            <div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-p" style="flex:1" id="iv-send" onclick="sendIVAnswer()">שלח תשובה</button><button class="btn btn-g" onclick="nextIVQ()">דלג →</button></div>
+          </div>
+          <div class="card" id="iv-fb" style="display:none;border-color:var(--p3)">
+            <div class="label" style="color:var(--p3)">משוב AI</div>
+            <div id="iv-fb-body"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card" id="iv-results" style="display:none"><div class="label">סיכום</div><div id="iv-results-body"></div></div>
+          <div class="card">
+            <div class="label">טיפים לראיון</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+              <div style="padding:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:var(--r)">⏱️ <strong>STAR</strong> — מצב, משימה, פעולה, תוצאה</div>
+              <div style="padding:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:var(--r)">📊 כמת הישגים במספרים תמיד</div>
+              <div style="padding:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:var(--r)">🎯 הכן 3-4 סיפורי הצלחה בעל פה</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COACH -->
+    <div class="page" id="page-coach">
+      <div class="ph">
+        <div><div class="ph-title">מאמן קריירה 🤖</div><div class="ph-sub" id="provider-lbl">Gemini AI</div></div>
+        <button class="btn btn-g" onclick="clearChat()">🗑️ נקה</button>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-hdr">
+          <div class="agent-av">🤖</div>
+          <div><div style="font-weight:800;font-size:14px">CareerUp Agent</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--p)"><div class="dot-online"></div><span>מחובר ומוכן</span></div></div>
+          <div style="margin-right:auto"><span class="badge b-p">מומחה קריירה</span></div>
+        </div>
+        <div class="sug-row">
+          <div class="sug-chip" onclick="quickAsk('איך כותבים Summary חזק לקו&quot;ח?')">📄 Summary</div>
+          <div class="sug-chip" onclick="quickAsk('תן לי טיפים לראיון HR')">🎯 ראיון HR</div>
+          <div class="sug-chip" onclick="quickAsk('איך להתבלט בלינקדאין?')">🔗 LinkedIn</div>
+          <div class="sug-chip" onclick="quickAsk('כמה לבקש כשכר כ-Junior Developer?')">💰 שכר</div>
+        </div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg msg-ai"><div class="m-av">🤖</div><div class="m-bubble">שלום! אני מאמן הקריירה שלך. כאן לעזור בכל הקשור לחיפוש עבודה בהייטק. במה נתחיל? 😊</div></div>
+        </div>
+        <div class="chat-foot">
+          <textarea class="inp" id="chat-inp" rows="2" style="flex:1" placeholder="שאל כל שאלה..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+          <button class="btn btn-p" style="padding:13px 18px" onclick="sendChat()">↑</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const S = {
+  ob: { domain:'', skills:[], exp:'' },
+  obStep: 1,
+  wiz: 1, tpl:'classic', lang:'en',
+  resumeId: null,
+  xp: 0, streak: 1,
+  ivQs:[], ivIdx:0, ivScores:[],
+};
+
+const DOMAINS = [
+  {e:'🎨',n:'Frontend',s:'React, HTML',k:'frontend'},{e:'⚙️',n:'Backend',s:'Node, Python',k:'backend'},
+  {e:'🔄',n:'Full Stack',s:'גם וגם',k:'fullstack'},{e:'🤖',n:'Data / AI',s:'Python, ML',k:'data'},
+  {e:'☁️',n:'DevOps',s:'Docker, AWS',k:'devops'},{e:'✏️',n:'UX/UI',s:'Figma',k:'ux'},
+  {e:'📋',n:'Product',s:'PM',k:'product'},{e:'🔒',n:'Cyber',s:'Security',k:'cyber'},
+  {e:'🧪',n:'QA',s:'Testing',k:'qa'},{e:'📱',n:'Mobile',s:'iOS/Android',k:'mobile'},
+];
+const SKILL_CATS = [
+  {c:'שפות',s:['Python','JavaScript','TypeScript','Java','C++','Go','Swift']},
+  {c:'Frontend',s:['React','Vue.js','Angular','Next.js','HTML','CSS','Tailwind']},
+  {c:'Backend',s:['Node.js','Express','Django','FastAPI','Spring']},
+  {c:'Database',s:['SQL','PostgreSQL','MongoDB','Redis','Firebase']},
+  {c:'DevOps',s:['Docker','Kubernetes','Git','AWS','GCP','Linux']},
+  {c:'AI / Data',s:['Machine Learning','TensorFlow','PyTorch','Pandas']},
+];
+const EXP = [
+  {e:'🎓',n:'ללא ניסיון',k:'none'},{e:'📚',n:'פרויקטים בלבד',k:'projects'},
+  {e:'💼',n:'Intern',k:'intern'},{e:'🌱',n:'עד שנה',k:'under1'},
+  {e:'📈',n:'1–2 שנים',k:'1to2'},{e:'⭐',n:'2–3 שנים',k:'2to3'},
+];
+const IV_QS = {
+  behavioral:['ספר/י על פרויקט שאת/ה גאה בו. מה האתגרים?','תאר/י קונפליקט עם עמית ואיך פתרת.','ספר/י על משימה שנכשלת. מה למדת?','מה ההישג הגדול ביותר שלך?','איך מתמודד/ת עם לחץ?'],
+  hr:['ספר/י על עצמך.','למה את/ה מחפש/ת עבודה?','איפה בעוד 3 שנים?','חוזקות וחולשות?','למה החברה שלנו?'],
+  technical:['תאר/י ארכיטקטורת מערכת שבנית.','כיצד תתכנן DB למיליון משתמשים?','REST vs GraphQL – מתי כל אחד?'],
+};
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function toast(msg, type='inf', ms=3000) {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('tw').appendChild(el);
+  setTimeout(() => { el.style.animation='tOut .4s ease forwards'; setTimeout(()=>el.remove(),400); }, ms);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function fmtMD(t) {
+  if (!t) return '';
+  return t.replace(/###\s(.+)/g,'<br><strong style="color:var(--p)">$1</strong>')
+          .replace(/##\s(.+)/g,'<br><strong style="color:var(--p)">$1</strong>')
+          .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+          .replace(/\n-\s(.+)/g,'<br>• $1')
+          .replace(/\n/g,'<br>');
+}
+
+// ══════════════════════════════════════
+// AI CALL → Firebase Function /api
+// ══════════════════════════════════════
+async function callAI(message, mode='chat') {
+  const res = await fetch('/api', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, mode })
+  });
+  if (!res.ok) throw new Error(`שגיאת שרת ${res.status}`);
+  const d = await res.json();
+  if (d.error) throw new Error(d.error);
+  return d.reply;
+}
+
+// ══════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════
+async function signInWithGoogle() {
+  const btn = document.getElementById('btn-google');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> מחבר...';
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    // onAuthStateChanged ימשיך מכאן
+  } catch(e) {
+    toast('שגיאת כניסה: ' + e.message, 'wrn');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="22" height="22" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>המשך עם Google';
+  }
+}
+
+async function doSignOut() {
+  if (!confirm('להתנתק?')) return;
+  await auth.signOut();
+  currentUser = null;
+  showScreen('screen-auth');
+  toast('התנתקת', 'ok');
+}
+
+// מאזין לשינוי מצב התחברות
+auth.onAuthStateChanged(async (user) => {
+  if (!user) { showScreen('screen-auth'); return; }
+  currentUser = user;
+
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      const d = doc.data();
+      S.ob.domain = d.domain || '';
+      S.ob.skills = d.skills || [];
+      S.ob.exp    = d.exp    || '';
+      S.xp        = d.xp     || 0;
+      S.streak    = d.streak || 1;
+      if (S.ob.domain) { launchApp(); return; }
+    }
+    // משתמש חדש – אשף
+    showScreen('screen-ob');
+    renderOB();
+  } catch(e) {
+    toast('שגיאת טעינה: ' + e.message, 'wrn');
+    showScreen('screen-auth');
+  }
+});
+
+// ══════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════
+function renderOB() {
+  document.getElementById('ob-fill').style.width = (S.obStep/3*100)+'%';
+  document.getElementById('ob-pill').textContent = `שלב ${S.obStep} מתוך 3`;
+  const body = document.getElementById('ob-body');
+
+  if (S.obStep === 1) {
+    body.innerHTML = `
+      <div class="ob-q">מה תחום החיפוש שלך? 🎯</div>
+      <div class="ob-sub">נבנה לך חוויה מותאמת אישית</div>
+      <div class="domain-grid">${DOMAINS.map(d=>`
+        <div class="domain-card${S.ob.domain===d.k?' sel':''}" onclick="obPickDomain('${d.k}',this)">
+          <div class="dc-icon">${d.e}</div><div class="dc-name">${d.n}</div><div class="dc-sub">${d.s}</div>
+        </div>`).join('')}</div>
+      <div class="ob-nav"><div></div><button class="btn btn-p btn-lg" onclick="obNext()">הבא →</button></div>`;
+  } else if (S.obStep === 2) {
+    body.innerHTML = `
+      <div class="ob-q">מה הכישורים שלך? 🛠️</div>
+      <div class="ob-sub">בחר הכל מה שרלוונטי</div>
+      <div class="skill-scroll">${SKILL_CATS.map(cat=>`
+        <div>
+          <div class="s-cat-title">${cat.c}</div>
+          <div class="s-chips">${cat.s.map(sk=>`
+            <div class="s-chip${S.ob.skills.includes(sk)?' sel':''}" onclick="obToggleSkill('${sk}',this)">${sk}</div>
+          `).join('')}</div>
+        </div>`).join('')}</div>
+      <div style="font-size:12px;color:var(--p);margin-top:10px" id="skill-count">נבחרו: ${S.ob.skills.length}</div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obBack()">← חזרה</button><button class="btn btn-p btn-lg" onclick="obNext()">הבא →</button></div>`;
+  } else if (S.obStep === 3) {
+    body.innerHTML = `
+      <div class="ob-q">רמת ניסיון 📋</div>
+      <div class="ob-sub">נתאים לך משרות רלוונטיות</div>
+      <div class="exp-grid">${EXP.map(e=>`
+        <div class="exp-card${S.ob.exp===e.k?' sel':''}" onclick="obPickExp('${e.k}',this)">
+          <div style="font-size:26px;margin-bottom:7px">${e.e}</div>
+          <div style="font-size:12px;font-weight:700">${e.n}</div>
+        </div>`).join('')}</div>
+      <div class="ob-nav">
+        <button class="btn btn-ghost" onclick="obBack()">← חזרה</button>
+        <button class="btn btn-p btn-lg" id="ob-finish-btn" onclick="obFinish()">🚀 סיום</button>
+      </div>`;
+  }
+}
+
+function obPickDomain(k,el) { S.ob.domain=k; document.querySelectorAll('.domain-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function obToggleSkill(sk,el) { if(S.ob.skills.includes(sk)){S.ob.skills=S.ob.skills.filter(x=>x!==sk);el.classList.remove('sel');}else{S.ob.skills.push(sk);el.classList.add('sel');} const c=document.getElementById('skill-count');if(c)c.textContent='נבחרו: '+S.ob.skills.length; }
+function obPickExp(k,el) { S.ob.exp=k; document.querySelectorAll('.exp-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function obNext() { if(S.obStep===1&&!S.ob.domain){toast('בחר תחום','wrn');return;} if(S.obStep===3&&!S.ob.exp){toast('בחר רמת ניסיון','wrn');return;} S.obStep++; renderOB(); }
+function obBack() { S.obStep=Math.max(1,S.obStep-1); renderOB(); }
+
+async function obFinish() {
+  if (!S.ob.exp) { toast('בחר רמת ניסיון','wrn'); return; }
+  const btn = document.getElementById('ob-finish-btn');
+  btn.disabled=true; btn.innerHTML='<div class="spin" style="border-top-color:#030816"></div>';
+  try {
+    await db.collection('users').doc(currentUser.uid).set({
+      name:    currentUser.displayName||'',
+      email:   currentUser.email||'',
+      avatar:  currentUser.photoURL||'',
+      domain:  S.ob.domain,
+      skills:  S.ob.skills,
+      exp:     S.ob.exp,
+      xp:      50,
+      streak:  1,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    S.xp = 50;
+    launchApp();
+  } catch(e) {
+    toast('שגיאת שמירה: '+e.message,'wrn');
+    btn.disabled=false; btn.innerHTML='🚀 סיום';
+  }
+}
+
+// ══════════════════════════════════════
+// LAUNCH APP
+// ══════════════════════════════════════
+async function launchApp() {
+  showScreen('screen-app');
+  const u = currentUser;
+  const wrap = document.getElementById('av-wrap');
+  if (u.photoURL) {
+    wrap.innerHTML = `<img src="${u.photoURL}" class="u-av" alt="avatar">`;
+  } else {
+    const init = (u.displayName||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    wrap.innerHTML = `<div class="u-av-ph">${init}</div>`;
+  }
+  document.getElementById('u-name').textContent = u.displayName || u.email;
+  document.getElementById('dash-hi').textContent = `שלום, ${(u.displayName||'').split(' ')[0] || ''}! 👋`;
+  document.getElementById('sb-xp').textContent = S.xp;
+  document.getElementById('sb-streak').textContent = S.streak;
+  loadDashboard();
+  toast('ברוכים הבאים ל-CareerUp 🎉','ok',4000);
+}
+
+// ══════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════
+async function loadDashboard() {
+  if (!currentUser) return;
+  const uid = currentUser.uid;
+  try {
+    const [rSnap, aSnap, iSnap] = await Promise.all([
+      db.collection('users').doc(uid).collection('resumes').orderBy('updatedAt','desc').get(),
+      db.collection('users').doc(uid).collection('jobAnalyses').orderBy('createdAt','desc').limit(10).get(),
+      db.collection('users').doc(uid).collection('interviews').orderBy('createdAt','desc').limit(10).get(),
+    ]);
+    const resumes = rSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const analyses = aSnap.docs.map(d=>d.data());
+    const interviews = iSnap.docs.map(d=>d.data());
+
+    document.getElementById('d-resumes').textContent = resumes.length;
+    document.getElementById('d-iv').textContent = interviews.length;
+    const avg = analyses.length ? Math.round(analyses.reduce((a,b)=>a+(b.matchScore||0),0)/analyses.length) : null;
+    document.getElementById('d-match').textContent = avg ? avg+'%' : '—';
+
+    const list = document.getElementById('resumes-list');
+    if (!resumes.length) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">עוד לא שמרת קורות חיים</div>';
+    } else {
+      list.innerHTML = resumes.map(r=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,0,0,.3);border-radius:var(--rm);border:1px solid rgba(255,255,255,.05);margin-bottom:8px">
+          <div><div style="font-weight:700">${r.name||'קורות חיים'}</div><div style="font-size:11px;color:var(--muted)">${r.tpl||'classic'} · ${r.lang==='en'?'English':'עברית'}</div></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-g btn-sm" onclick="loadResumeById('${r.id}')">✏️ ערוך</button>
+            <button class="btn btn-sm" style="background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.3)" onclick="deleteResumeById('${r.id}')">🗑️</button>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) { console.error('loadDashboard',e); }
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  if (page==='dashboard') loadDashboard();
+}
+document.querySelectorAll('.nav-item[data-page]').forEach(el=>el.addEventListener('click',()=>navTo(el.dataset.page)));
+
+// ══════════════════════════════════════
+// RESUME BUILDER
+// ══════════════════════════════════════
+function switchTab(t) {
+  document.getElementById('tab-scratch').style.display = t==='scratch'?'block':'none';
+  document.getElementById('tab-match').style.display   = t==='match'?'block':'none';
+  document.querySelectorAll('.mtab').forEach((b,i)=>b.classList.toggle('active',['scratch','match'][i]===t));
+}
+function goWiz(n) {
+  S.wiz=n;
+  for(let i=1;i<=4;i++){
+    const s=document.getElementById('wstep'+i); if(s)s.style.display=i===n?'block':'none';
+    const ws=document.getElementById('ws'+i);   if(ws)ws.className='ws '+(i<n?'done':i===n?'active':'');
+    const sep=document.getElementById('wsep'+i);if(sep)sep.className='ws-sep '+(i<n?'done':'');
+  }
+}
+function pickTpl(t,el) { S.tpl=t; document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickLang(l,el) { S.lang=l; document.querySelectorAll('.lang-opt').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); const p=document.getElementById('cv-preview');if(p)p.className='cv '+l; }
+function livePreview() {
+  const v=id=>document.getElementById(id)?.value||'';
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set('pr-name',v('f-name')||'Your Name'); set('pr-role',v('f-role')||'Your Role');
+  set('pr-email',v('f-email')); set('pr-phone',v('f-phone')); set('pr-linkedin',v('f-linkedin'));
+  set('pr-summary',v('f-summary')||'Your summary...');
+}
+async function aiImprove(fieldId) {
+  const el=document.getElementById(fieldId); if(!el)return;
+  const val=el.value.trim();
+  toast('✨ AI משפר...','inf');
+  const prompts={
+    'f-name':`החזר רק את השם הבא באנגלית פורמלית ללא תוספות: ${val||'Your Name'}`,
+    'f-role':`שפר הגדרת תפקיד לאנגלית מקצועית. החזר גרסה אחת בלבד: ${val||'Developer'}`,
+    'f-summary':`כתוב Professional Summary לקו"ח באנגלית (3 משפטים, ללא בולטים): ${val||'Experienced developer'}`
+  };
+  try {
+    const reply=await callAI(prompts[fieldId],'improve');
+    el.value=reply.replace(/[*#"`]/g,'').trim();
+    livePreview();
+    toast('✅ שופר!','ok');
+    if(currentUser) addXP(5,'ai_improve');
+  } catch(e) { toast('שגיאת AI','wrn'); }
+}
+async function saveResume() {
+  if(!currentUser){toast('יש להתחבר','wrn');return;}
+  const data={
+    name: document.getElementById('f-name')?.value||'קורות חיים',
+    tpl: S.tpl, lang: S.lang,
+    content:{ name:document.getElementById('f-name')?.value||'', role:document.getElementById('f-role')?.value||'', email:document.getElementById('f-email')?.value||'', phone:document.getElementById('f-phone')?.value||'', linkedin:document.getElementById('f-linkedin')?.value||'', summary:document.getElementById('f-summary')?.value||'' },
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    if (S.resumeId) {
+      await db.collection('users').doc(currentUser.uid).collection('resumes').doc(S.resumeId).set(data,{merge:true});
+    } else {
+      const ref=await db.collection('users').doc(currentUser.uid).collection('resumes').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      S.resumeId=ref.id;
+    }
+    toast('☁️ נשמר בענן ✓','ok');
+    addXP(10,'resume_save');
+  } catch(e) { toast('שגיאת שמירה: '+e.message,'wrn'); }
+}
+async function loadResumeById(id) {
+  if(!currentUser)return;
+  try {
+    const snap=await db.collection('users').doc(currentUser.uid).collection('resumes').doc(id).get();
+    if(!snap.exists){toast('לא נמצא','wrn');return;}
+    const r=snap.data(); S.resumeId=id; S.tpl=r.tpl||'classic'; S.lang=r.lang||'en';
+    const c=r.content||{};
+    ['name','role','email','phone','linkedin','summary'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=c[f]||'';});
+    navTo('resume'); goWiz(3); livePreview();
+    toast('נטען ✓','ok');
+  } catch(e){toast('שגיאת טעינה','wrn');}
+}
+async function deleteResumeById(id) {
+  if(!currentUser||!confirm('למחוק?'))return;
+  try {
+    await db.collection('users').doc(currentUser.uid).collection('resumes').doc(id).delete();
+    if(S.resumeId===id)S.resumeId=null;
+    toast('נמחק ✓','ok'); loadDashboard();
+  } catch(e){toast('שגיאת מחיקה','wrn');}
+}
+function exportPDF() {
+  toast('מכין PDF...','inf');
+  const el=document.getElementById('cv-preview');
+  if(!el){toast('אין תוכן','wrn');return;}
+  html2pdf().set({margin:0,filename:'CareerUp_Resume.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4'}}).from(el).save().then(()=>toast('✅ PDF נשמר!','ok'));
+}
+
+// ══════════════════════════════════════
+// JOB MATCH
+// ══════════════════════════════════════
+async function analyzeMatch() {
+  const jd=document.getElementById('jd-input')?.value?.trim();
+  if(!jd||jd.length<30){toast('הדבק תיאור משרה מלא','wrn');return;}
+  const box=document.getElementById('match-box');
+  box.innerHTML=`<div class="card" style="text-align:center;padding:40px"><div class="spin" style="width:32px;height:32px;border-width:3px;color:var(--p);margin:0 auto 14px"></div><div style="color:var(--pl)">Gemini מנתח...</div></div>`;
+  const skills=(S.ob.skills||[]).join(', ')||'general developer';
+  const prompt=`השווה קו"ח לדרישות המשרה. החזר JSON תקין בלבד, ללא markdown:
+{"matchScore":number,"matchTitle":"string","matchSub":"string","skills":[{"name":"string","myLevel":number,"required":number}],"gaps":[{"skill":"string","reason":"string","currentChance":number,"afterCourse":number,"courseName":"string","platform":"string","duration":"string"}]}
+קו"ח: Skills: ${skills}. Experience: ${S.ob.exp||'entry'}.
+משרה: ${jd}
+3 skills ו-2 gaps לפחות. טקסט בעברית.`;
+  try {
+    const raw=await callAI(prompt,'jobmatch');
+    const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderMatchResults(d);
+    if(currentUser){
+      db.collection('users').doc(currentUser.uid).collection('jobAnalyses').add({matchScore:d.matchScore,matchTitle:d.matchTitle,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      addXP(20,'job_analysis');
+    }
+    toast('✅ ניתוח הושלם!','ok');
+  } catch(e){
+    box.innerHTML=`<div class="card" style="border-color:var(--amber);text-align:center;padding:30px"><div style="font-size:24px;margin-bottom:8px">⚠️</div><div style="color:var(--amber)">שגיאה: ${e.message}</div></div>`;
+  }
+}
+function renderMatchResults(d) {
+  const score=d.matchScore||0;
+  document.getElementById('match-box').innerHTML=`
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" style="border-color:var(--p)">
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:18px">
+        <div class="ring-wrap">
+          <svg width="90" height="90" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="url(#rg)" stroke-width="8" stroke-dasharray="238" stroke-dashoffset="${238-(238*score/100)}" stroke-linecap="round"/>
+            <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#00f0ff"/></linearGradient></defs>
+          </svg>
+          <div class="ring-inner"><div class="ring-num" style="color:var(--p)">${score}%</div><div class="ring-lbl">התאמה</div></div>
+        </div>
+        <div><div style="font-size:16px;font-weight:800;margin-bottom:4px">${d.matchTitle||''}</div><div style="font-size:12px;color:var(--pl)">${d.matchSub||''}</div></div>
+      </div>
+      ${(d.skills||[]).map(sk=>`
+        <div class="sbar-row"><div class="sbar-lbl">${sk.name}</div>
+          <div class="sbar-track"><div class="sbar-fill" style="width:${Math.min(sk.myLevel,100)}%;background:${sk.myLevel>=sk.required?'var(--p3)':'var(--amber)'}"></div></div>
+          <div class="sbar-val" style="color:${sk.myLevel>=sk.required?'var(--p3)':'var(--amber)'}">${sk.myLevel}</div>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="label">🎓 קורסים לסגירת פערים</div>
+      ${(d.gaps||[]).map(g=>`
+        <div style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:var(--rm);padding:16px;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:14px;font-weight:800">${g.skill}</div>
+            <span class="badge b-p">+${Math.max(0,(g.afterCourse||0)-(g.currentChance||0))}% 🚀</span>
+          </div>
+          <div style="font-size:12px;color:var(--pl);margin-bottom:12px">${g.reason}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;gap:8px"><span class="badge b-p" style="font-size:10px">${g.platform}</span><span class="badge b-g" style="font-size:10px">${g.duration}</span></div>
+            <button class="btn btn-p btn-sm" onclick="window.open('https://www.youtube.com/results?search_query='+encodeURIComponent('${(g.courseName||'').replace(/'/g,'')}'),'_blank')">למד עכשיו</button>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════
+async function sendChat() {
+  const inp=document.getElementById('chat-inp');
+  const text=inp.value.trim(); if(!text)return;
+  const msgs=document.getElementById
